@@ -1,23 +1,8 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import App from "./src/App.js";
 
-export default class App extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-      </View>
-    );
-  }
-}
+// this is here in case we want to add any providers
+// I was fooling around with ApolloProvider but decided not to use it
+const RootApp = () => <App />;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
+export default RootApp;
