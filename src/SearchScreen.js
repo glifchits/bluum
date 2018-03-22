@@ -1,11 +1,33 @@
 import React, { Fragment } from "react";
-import { StyleSheet, Text, FlatList, View, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  FlatList,
+  View,
+  TextInput,
+  Button,
+} from "react-native";
+import { StackNavigator } from "react-navigation";
 import coffees from "./coffees";
 
-export default class HomeScreen extends React.Component {
+const _norm = str => {
+  return str.toLowerCase().replace(/ /g, "");
+};
+
+class HomeScreen extends React.Component {
   state = { inputValue: "" };
 
   _handleSearchChange = inputValue => this.setState({ inputValue });
+
+  filterCoffee = coffee => {
+    const { inputValue } = this.state;
+    const matchStr = Object.keys(coffee)
+      .sort()
+      .map(k => _norm(coffee[k]))
+      .join("");
+    const search = _norm(inputValue);
+    return matchStr.indexOf(search) >= 0;
+  };
 
   render() {
     const { inputValue } = this.state;
@@ -24,6 +46,14 @@ export default class HomeScreen extends React.Component {
         </Fragment>
       );
     } else {
+      const coffeesToShow = coffees.filter(this.filterCoffee);
+      const addNewButton =
+        coffeesToShow.length <= 1 ? (
+          <Button
+            onPress={() => this.props.navigation.navigate("AddNewCoffee")}
+            title={`Can't find ${this.state.inputValue}? Add it!`}
+          />
+        ) : null;
       body = (
         <Fragment>
           <TextInput
@@ -35,7 +65,12 @@ export default class HomeScreen extends React.Component {
             onChangeText={this._handleSearchChange}
             style={styles.searchInputActive}
           />
-          <SearchListing searchInput={inputValue} />
+          {addNewButton}
+          <FlatList
+            data={coffeesToShow}
+            renderItem={({ item }) => <Coffee {...item} />}
+            keyExtractor={item => item.name}
+          />
         </Fragment>
       );
     }
@@ -52,27 +87,12 @@ const Coffee = ({ name, region, roaster }) => (
   </View>
 );
 
-class SearchListing extends React.Component {
-  filterCoffee = coffee => {
-    const _norm = str => {
-      return str.toLowerCase().replace(/ /g, "");
-    };
-    const { searchInput } = this.props;
-    const matchStr = Object.keys(coffee)
-      .sort()
-      .map(k => _norm(coffee[k]))
-      .join("");
-    const search = _norm(searchInput);
-    return matchStr.indexOf(search) >= 0;
-  };
-
+class AddNewCoffee extends React.Component {
   render() {
     return (
-      <FlatList
-        data={coffees.filter(this.filterCoffee)}
-        renderItem={({ item }) => <Coffee {...item} />}
-        keyExtractor={item => item.name}
-      />
+      <View style={styles.addContainer}>
+        <Text>Add a new coffee</Text>
+      </View>
     );
   }
 }
@@ -83,6 +103,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  addContainer: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 20,
   },
   searchInput: {
     borderWidth: 1,
@@ -102,3 +127,20 @@ const styles = StyleSheet.create({
     margin: 30,
   },
 });
+
+const SearchScreen = StackNavigator({
+  Home: {
+    screen: HomeScreen,
+    navigationOptions: {
+      header: null,
+    },
+  },
+  AddNewCoffee: {
+    screen: AddNewCoffee,
+    navigationOptions: {
+      title: "Add a new coffee",
+    },
+  },
+});
+
+export default SearchScreen;
