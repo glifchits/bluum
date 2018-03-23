@@ -7,20 +7,6 @@ import Profile from "./Profile";
 
 const App = TabNavigator(
   {
-    HomeTab: {
-      screen: SearchScreen,
-      path: "/",
-      navigationOptions: {
-        tabBarLabel: "Search",
-        tabBarIcon: ({ tintColor, focused }) => (
-          <Ionicons
-            name={focused ? "ios-search" : "ios-search-outline"}
-            size={26}
-            style={{ color: tintColor }}
-          />
-        ),
-      },
-    },
     MyCoffee: {
       screen: MyCoffee,
       path: "/mycoffee",
@@ -29,6 +15,20 @@ const App = TabNavigator(
         tabBarIcon: ({ tintColor, focused }) => (
           <Ionicons
             name={focused ? "ios-flask" : "ios-flask-outline"}
+            size={26}
+            style={{ color: tintColor }}
+          />
+        ),
+      },
+    },
+    HomeTab: {
+      screen: SearchScreen,
+      path: "/",
+      navigationOptions: {
+        tabBarLabel: "Search",
+        tabBarIcon: ({ tintColor, focused }) => (
+          <Ionicons
+            name={focused ? "ios-search" : "ios-search-outline"}
             size={26}
             style={{ color: tintColor }}
           />
@@ -54,6 +54,8 @@ const App = TabNavigator(
     tabBarOptions: {
       showLabel: true,
     },
+    tabBarPosition: "bottom",
+    initialRouteName: "HomeTab",
   },
 );
 
