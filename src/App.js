@@ -1,14 +1,20 @@
 import React, { Fragment } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { TabNavigator } from "react-navigation";
+import { TabNavigator, StackNavigator } from "react-navigation";
 import SearchScreen from "./SearchScreen";
-import MyCoffee from "./MyCoffee";
+import MyCoffeeScreen from "./MyCoffee";
 import Profile from "./Profile";
+import CoffeeProfileScreen from "./CoffeeProfile";
+
+const MyCoffeeStack = StackNavigator({
+  MyCoffee: { screen: MyCoffeeScreen },
+  CoffeeProfile: { screen: CoffeeProfileScreen },
+});
 
 const App = TabNavigator(
   {
     MyCoffee: {
-      screen: MyCoffee,
+      screen: MyCoffeeStack,
       path: "/mycoffee",
       navigationOptions: {
         tabBarLabel: "My Brews",

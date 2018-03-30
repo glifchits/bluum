@@ -12,8 +12,6 @@ import Rating from "./Rating.js";
 
 import my_coffees from "./my_coffees";
 
-// TO DO: hook up back button
-
 const SORT_OPTIONS = [
   { label: "Name", value: "name" },
   { label: "Roaster", value: "roaster" },
@@ -28,7 +26,7 @@ const _norm = str => {
   return str.toLowerCase().replace(/ /g, "");
 };
 
-export default class MyCoffee extends React.Component {
+export default class MyCoffeeScreen extends React.Component {
   constructor(props) {
     super(props);
 
@@ -45,6 +43,10 @@ export default class MyCoffee extends React.Component {
     this.handleSearchToggle = this.handleSearchToggle.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
   }
+
+  static navigationOptions = {
+    header: null,
+  };
 
   filterCoffee(coffee) {
     const { searchTerm } = this.state;
@@ -84,6 +86,12 @@ export default class MyCoffee extends React.Component {
     this.setState({ searchTerm: inputValue });
   }
 
+  handleSelectCoffee(coffee) {
+    this.props.navigation.navigate("CoffeeProfile", {
+      coffee: coffee,
+    });
+  }
+
   render() {
     const sortedCoffee = this.sortCoffee().filter(this.filterCoffee);
 
@@ -91,6 +99,7 @@ export default class MyCoffee extends React.Component {
       <ListItem
         key={index}
         title={coffee.name}
+        onPress={() => this.handleSelectCoffee(coffee)}
         subtitle={
           <View>
             <Text>{coffee.roaster}</Text>
@@ -117,7 +126,6 @@ export default class MyCoffee extends React.Component {
     return (
       <View style={styles.container}>
         <Header
-          leftComponent={{ icon: "arrow-back", color: "#fff" }}
           centerComponent={centerComponent}
           rightComponent={
             <Icon
