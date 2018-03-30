@@ -5,8 +5,10 @@ const my_coffees = [
     roaster: "Phil & Sebastian",
     name: "Gaharo Hill",
     region: "Burundi",
-    type: "Light",
+    roast: "Light",
+    type: "Filter",
     rating: 3.5,
+    dateAdded: "2018-01-05",
   },
   {
     roaster: "Phil & Sebastian",
@@ -15,6 +17,7 @@ const my_coffees = [
     roast: "Light",
     type: "Filter",
     rating: 5,
+    dateAdded: "2018-02-05",
   },
   {
     roaster: "La Cabra",
@@ -23,6 +26,7 @@ const my_coffees = [
     roast: "Light",
     type: "Filter",
     rating: 4,
+    dateAdded: "2018-03-05",
   },
   {
     roaster: "Smile Tiger",
@@ -31,6 +35,7 @@ const my_coffees = [
     roast: "Medium/Dark",
     type: "Filter",
     rating: 2,
+    dateAdded: "2018-04-05",
   },
 ];
 
