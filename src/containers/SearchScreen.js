@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { StackNavigator } from "react-navigation";
 import t from "tcomb-form-native";
-import coffees from "./coffees";
+import coffees from "../testdata/coffees";
 
 const { Form } = t.form;
 

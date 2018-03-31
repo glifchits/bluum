@@ -8,8 +8,8 @@ import {
   ListItem,
   Button,
 } from "react-native-elements";
-import Rating from "./Rating.js";
-import brews from "./brews.js";
+import Rating from "../components/Rating.js";
+import brews from "../testdata/brews.js";
 
 export default class CoffeeProfileScreen extends React.Component {
   constructor(props) {

@@ -1,10 +1,10 @@
 import React, { Fragment } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { TabNavigator, StackNavigator } from "react-navigation";
-import SearchScreen from "./SearchScreen";
-import MyCoffeeScreen from "./MyCoffee";
-import Profile from "./Profile";
-import CoffeeProfileScreen from "./CoffeeProfile";
+import SearchScreen from "./containers/SearchScreen";
+import MyCoffeeScreen from "./containers/MyCoffee.js";
+import Profile from "./containers/Profile";
+import CoffeeProfileScreen from "./containers/CoffeeProfile";
 
 const MyCoffeeStack = StackNavigator({
   MyCoffee: { screen: MyCoffeeScreen },
@@ -15,7 +15,7 @@ const App = TabNavigator(
   {
     MyCoffee: {
       screen: MyCoffeeStack,
-      path: "/mycoffee",
+      path: "/containers/mycoffee",
       navigationOptions: {
         tabBarLabel: "My Brews",
         tabBarIcon: ({ tintColor, focused }) => (
@@ -29,7 +29,7 @@ const App = TabNavigator(
     },
     HomeTab: {
       screen: SearchScreen,
-      path: "/",
+      path: "/containers/",
       navigationOptions: {
         tabBarLabel: "Search",
         tabBarIcon: ({ tintColor, focused }) => (
@@ -43,7 +43,7 @@ const App = TabNavigator(
     },
     Profile: {
       screen: Profile,
-      path: "/profile",
+      path: "/containers/profile",
       navigationOptions: {
         tabBarLabel: "Profile",
         tabBarIcon: ({ tintColor, focused }) => (

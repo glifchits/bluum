@@ -8,9 +8,9 @@ import {
   TextInput,
 } from "react-native";
 import { Header, List, ListItem, Icon } from "react-native-elements";
-import Rating from "./Rating.js";
-
-import my_coffees from "./my_coffees";
+import Rating from "../components/Rating";
+import { sortCoffee } from "../utils/utils";
+import my_coffees from "../testdata/my_coffees";
 
 const SORT_OPTIONS = [
   { label: "Name", value: "name" },
@@ -38,7 +38,6 @@ export default class MyCoffeeScreen extends React.Component {
       searchTerm: "",
     };
 
-    this.sortCoffee = this.sortCoffee.bind(this);
     this.filterCoffee = this.filterCoffee.bind(this);
     this.handleSearchToggle = this.handleSearchToggle.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
@@ -55,18 +54,6 @@ export default class MyCoffeeScreen extends React.Component {
       .join("");
     const search = _norm(searchTerm);
     return matchStr.indexOf(search) >= 0;
-  }
-
-  sortCoffee() {
-    const { sortBy, coffeeList } = this.state;
-    sortedCoffee = coffeeList.sort((a, b) => {
-      if (typeof a[sortBy] === "string") {
-        return a[sortBy].localeCompare(b[sortBy]);
-      } else {
-        return b[sortBy] - a[sortBy];
-      }
-    });
-    return sortedCoffee;
   }
 
   renderSortOptions() {
@@ -93,7 +80,10 @@ export default class MyCoffeeScreen extends React.Component {
   }
 
   render() {
-    const sortedCoffee = this.sortCoffee().filter(this.filterCoffee);
+    const { sortBy, coffeeList } = this.state;
+    const sortedCoffee = sortCoffee(sortBy, coffeeList).filter(
+      this.filterCoffee,
+    );
 
     const results = sortedCoffee.map((coffee, index) => (
       <ListItem
