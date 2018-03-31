@@ -9,13 +9,25 @@ import {
   Button,
 } from "react-native-elements";
 import Rating from "../components/Rating.js";
+import Dropdown from "../components/Dropdown";
 import brews from "../testdata/brews.js";
+import { sortCoffee } from "../utils/utils";
+
+const SORT_OPTIONS = [
+  { label: "Date", value: "date" },
+  { label: "Rating", value: "rating" },
+  { label: "Method", value: "method" },
+  { label: "Coarseness", value: "coarseness" },
+];
+
+const TABS = ["My Brews", "Coffee Info"];
 
 export default class CoffeeProfileScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedTab: 0,
+      sortBy: "date",
     };
 
     this.changeTab = this.changeTab.bind(this);
@@ -35,9 +47,11 @@ export default class CoffeeProfileScreen extends React.Component {
     // Pulls in coffee from the params passed in from My Coffee screen
     const { params } = this.props.navigation.state;
     const { coffee } = params;
-    const tabs = ["My Brews", "Coffee Info"];
+    const { sortBy } = this.state;
 
-    const results = brews.map((brew, index) => {
+    const sortedBrews = sortCoffee(sortBy, brews);
+
+    const results = sortedBrews.map((brew, index) => {
       return (
         <ListItem
           key={index}
@@ -79,8 +93,16 @@ export default class CoffeeProfileScreen extends React.Component {
           <ButtonGroup
             onPress={this.changeTab}
             selectedIndex={this.state.selectedTab}
-            buttons={tabs}
+            buttons={TABS}
             containerStyle={{ height: 50, marginTop: 20 }}
+          />
+          <Dropdown
+            label="Sort by:"
+            selectedValue={this.state.sortBy}
+            onValueChange={(itemValue, itemIndex) => {
+              this.setState({ sortBy: itemValue });
+            }}
+            options={SORT_OPTIONS}
           />
           <List>{results}</List>
         </ScrollView>

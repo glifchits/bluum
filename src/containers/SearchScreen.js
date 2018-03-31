@@ -13,10 +13,6 @@ import coffees from "../testdata/coffees";
 
 const { Form } = t.form;
 
-const _norm = str => {
-  return str.toLowerCase().replace(/ /g, "");
-};
-
 class HomeScreen extends React.Component {
   state = { inputValue: "" };
 

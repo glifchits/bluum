@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { Header, List, ListItem, Icon } from "react-native-elements";
 import Rating from "../components/Rating";
-import { sortCoffee } from "../utils/utils";
+import Dropdown from "../components/Dropdown";
+import { sortCoffee, filterCoffee } from "../utils/utils";
 import my_coffees from "../testdata/my_coffees";
 
 const SORT_OPTIONS = [
@@ -21,10 +22,6 @@ const SORT_OPTIONS = [
   { label: "Rating", value: "rating" },
   { label: "Date Added", value: "dateAdded" },
 ];
-
-const _norm = str => {
-  return str.toLowerCase().replace(/ /g, "");
-};
 
 export default class MyCoffeeScreen extends React.Component {
   constructor(props) {
@@ -38,7 +35,6 @@ export default class MyCoffeeScreen extends React.Component {
       searchTerm: "",
     };
 
-    this.filterCoffee = this.filterCoffee.bind(this);
     this.handleSearchToggle = this.handleSearchToggle.bind(this);
     this.handleSearchChange = this.handleSearchChange.bind(this);
   }
@@ -46,23 +42,6 @@ export default class MyCoffeeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
-
-  filterCoffee(coffee) {
-    const { searchTerm } = this.state;
-    const matchStr = Object.values(coffee)
-      .map(val => _norm(val.toString()))
-      .join("");
-    const search = _norm(searchTerm);
-    return matchStr.indexOf(search) >= 0;
-  }
-
-  renderSortOptions() {
-    return SORT_OPTIONS.map(opt => {
-      return (
-        <Picker.Item label={opt.label} value={opt.value} key={opt.label} />
-      );
-    });
-  }
 
   handleSearchToggle() {
     const searching = !this.state.searching;
@@ -80,9 +59,9 @@ export default class MyCoffeeScreen extends React.Component {
   }
 
   render() {
-    const { sortBy, coffeeList } = this.state;
-    const sortedCoffee = sortCoffee(sortBy, coffeeList).filter(
-      this.filterCoffee,
+    const { sortBy, coffeeList, searchTerm } = this.state;
+    const sortedCoffee = sortCoffee(sortBy, coffeeList).filter(coffee =>
+      filterCoffee(coffee, searchTerm),
     );
 
     const results = sortedCoffee.map((coffee, index) => (
@@ -127,17 +106,14 @@ export default class MyCoffeeScreen extends React.Component {
           outerContainerStyles={{ backgroundColor: "#8b8c8c" }}
           innerContainerStyles={{ justifyContent: "space-between" }}
         />
-        <View>
-          <Text>Sort by:</Text>
-          <Picker
-            selectedValue={this.state.sortBy}
-            onValueChange={(itemValue, itemIndex) => {
-              this.setState({ sortBy: itemValue });
-            }}
-          >
-            {this.renderSortOptions()}
-          </Picker>
-        </View>
+        <Dropdown
+          label="Sort by:"
+          selectedValue={this.state.sortBy}
+          onValueChange={(itemValue, itemIndex) => {
+            this.setState({ sortBy: itemValue });
+          }}
+          options={SORT_OPTIONS}
+        />
         <List>{results}</List>
       </View>
     );
