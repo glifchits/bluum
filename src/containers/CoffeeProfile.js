@@ -10,6 +10,7 @@ import {
 } from "react-native-elements";
 import Rating from "../components/Rating.js";
 import Dropdown from "../components/Dropdown";
+import CoffeeSummary from "../components/CoffeeSummary";
 import brews from "../testdata/brews.js";
 import { sortCoffee } from "../utils/utils";
 
@@ -43,6 +44,22 @@ export default class CoffeeProfileScreen extends React.Component {
     this.setState({ selectedTab: tab });
   }
 
+  handleSelectBrew(brew, coffee) {
+    this.props.navigation.navigate("Brew", {
+      brew: brew,
+      coffee: coffee,
+      editable: false,
+    });
+  }
+
+  handleAddBrew(coffee) {
+    this.props.navigation.navigate("Brew", {
+      brew: null,
+      coffee: coffee,
+      editable: true,
+    });
+  }
+
   render() {
     // Pulls in coffee from the params passed in from My Coffee screen
     const { params } = this.props.navigation.state;
@@ -51,20 +68,63 @@ export default class CoffeeProfileScreen extends React.Component {
 
     const sortedBrews = sortCoffee(sortBy, brews);
 
-    const results = sortedBrews.map((brew, index) => {
+    const myBrews = sortedBrews.map((brew, index) => {
       return (
         <ListItem
           key={index}
-          title={brew.date}
+          title={brew.date.value}
           subtitle={
             <View>
-              <Text>{brew.notes}</Text>
-              <Rating rating={brew.rating} ratingCount={5} />
+              <Text>{brew.notes.value}</Text>
+              <Rating rating={brew.rating.value} ratingCount={5} />
             </View>
           }
+          onPress={() => this.handleSelectBrew(brew, coffee)}
         />
       );
     });
+
+    const myBrewsBody = (
+      <View>
+        <Dropdown
+          label="Sort by:"
+          selectedValue={this.state.sortBy}
+          onValueChange={(itemValue, itemIndex) => {
+            this.setState({ sortBy: itemValue });
+          }}
+          options={SORT_OPTIONS}
+        />
+        <List>{myBrews}</List>
+      </View>
+    );
+
+    const coffeeInfoBody = (
+      <View>
+        <List>
+          <ListItem
+            key="description"
+            title="Description"
+            subtitle={coffee.description}
+            hideChevron
+            subtitleNumberOfLines={5}
+          />
+          <ListItem
+            key="origin"
+            title="Origin"
+            subtitle={coffee.origin}
+            hideChevron
+            subtitleNumberOfLines={5}
+          />
+          <ListItem
+            key="elevation"
+            title="Elevation"
+            subtitle={coffee.elevation}
+            hideChevron
+            subtitleNumberOfLines={5}
+          />
+        </List>
+      </View>
+    );
 
     return (
       <View style={styles.container}>
@@ -81,30 +141,14 @@ export default class CoffeeProfileScreen extends React.Component {
           innerContainerStyles={{ justifyContent: "space-between" }}
         />
         <ScrollView style={styles.body}>
-          <View style={styles.topInfo}>
-            <View style={styles.dummyImg} />
-            <View style={styles.primaryInfo}>
-              <Text style={styles.coffeeName}>{coffee.name}</Text>
-              <Text style={styles.roaster}>{coffee.roaster}</Text>
-              <Text style={styles.roastType}>{`${coffee.roast} Roast`}</Text>
-              <Rating rating={coffee.rating} ratingCount={5} />
-            </View>
-          </View>
+          <CoffeeSummary coffee={coffee} />
           <ButtonGroup
             onPress={this.changeTab}
             selectedIndex={this.state.selectedTab}
             buttons={TABS}
             containerStyle={{ height: 50, marginTop: 20 }}
           />
-          <Dropdown
-            label="Sort by:"
-            selectedValue={this.state.sortBy}
-            onValueChange={(itemValue, itemIndex) => {
-              this.setState({ sortBy: itemValue });
-            }}
-            options={SORT_OPTIONS}
-          />
-          <List>{results}</List>
+          {this.state.selectedTab === 0 ? myBrewsBody : coffeeInfoBody}
         </ScrollView>
         <View style={styles.buttonBar}>
           <Button
@@ -113,6 +157,7 @@ export default class CoffeeProfileScreen extends React.Component {
             color="#fff"
             borderRadius={3}
             title="Add a Brew"
+            onPress={() => this.handleAddBrew(coffee)}
           />
         </View>
       </View>
@@ -125,24 +170,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     flex: 1,
   },
-  topInfo: {
-    flexDirection: "row",
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderColor: "#d9d9d9",
-  },
   body: {
     padding: 20,
-  },
-  coffeeName: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  dummyImg: {
-    width: 125,
-    height: 125,
-    marginRight: 25,
-    backgroundColor: "#e5e5e5",
   },
   buttonBar: {
     paddingTop: 20,

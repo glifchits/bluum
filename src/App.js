@@ -5,10 +5,12 @@ import SearchScreen from "./containers/SearchScreen";
 import MyCoffeeScreen from "./containers/MyCoffee.js";
 import Profile from "./containers/Profile";
 import CoffeeProfileScreen from "./containers/CoffeeProfile";
+import BrewScreen from "./containers/Brew";
 
 const MyCoffeeStack = StackNavigator({
   MyCoffee: { screen: MyCoffeeScreen },
   CoffeeProfile: { screen: CoffeeProfileScreen },
+  Brew: { screen: BrewScreen },
 });
 
 const App = TabNavigator(

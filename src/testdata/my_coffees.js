@@ -9,6 +9,10 @@ const my_coffees = [
     type: "Filter",
     rating: 3.5,
     dateAdded: "2018-01-05",
+    description:
+      "This is our second year offering Gaharo Hill from Burundi and it continues to be a privilege to work with the Long Miles team. Despite the civil unrest present there, Burundi’s specialty coffee sector is developing, and the quality of coffees produced there are truly world class. This quality potential, coupled with an opportunity to affect change in one of the world’s poorest countries is what attracted Ben and Kristy Carlson, the founders of Long Miles Coffee Project. Ben reports that he spent two years tasting coffee from 187 washing stations in Burundi before honing in on the Gaharo Hill area to begin their Coffee Project.",
+    origin: "Bukeye Commune, Muramvya Province",
+    elevation: "1801m",
   },
   {
     roaster: "Phil & Sebastian",
@@ -18,6 +22,10 @@ const my_coffees = [
     type: "Filter",
     rating: 5,
     dateAdded: "2018-02-05",
+    description:
+      "This is our second year offering Gaharo Hill from Burundi and it continues to be a privilege to work with the Long Miles team. Despite the civil unrest present there, Burundi’s specialty coffee sector is developing, and the quality of coffees produced there are truly world class. This quality potential, coupled with an opportunity to affect change in one of the world’s poorest countries is what attracted Ben and Kristy Carlson, the founders of Long Miles Coffee Project. Ben reports that he spent two years tasting coffee from 187 washing stations in Burundi before honing in on the Gaharo Hill area to begin their Coffee Project.",
+    origin: "Bukeye Commune, Muramvya Province",
+    elevation: "1801m",
   },
   {
     roaster: "La Cabra",
@@ -27,6 +35,10 @@ const my_coffees = [
     type: "Filter",
     rating: 4,
     dateAdded: "2018-03-05",
+    description:
+      "This is our second year offering Gaharo Hill from Burundi and it continues to be a privilege to work with the Long Miles team. Despite the civil unrest present there, Burundi’s specialty coffee sector is developing, and the quality of coffees produced there are truly world class. This quality potential, coupled with an opportunity to affect change in one of the world’s poorest countries is what attracted Ben and Kristy Carlson, the founders of Long Miles Coffee Project. Ben reports that he spent two years tasting coffee from 187 washing stations in Burundi before honing in on the Gaharo Hill area to begin their Coffee Project.",
+    origin: "Bukeye Commune, Muramvya Province",
+    elevation: "1801m",
   },
   {
     roaster: "Smile Tiger",
@@ -36,6 +48,10 @@ const my_coffees = [
     type: "Filter",
     rating: 2,
     dateAdded: "2018-04-05",
+    description:
+      "This is our second year offering Gaharo Hill from Burundi and it continues to be a privilege to work with the Long Miles team. Despite the civil unrest present there, Burundi’s specialty coffee sector is developing, and the quality of coffees produced there are truly world class. This quality potential, coupled with an opportunity to affect change in one of the world’s poorest countries is what attracted Ben and Kristy Carlson, the founders of Long Miles Coffee Project. Ben reports that he spent two years tasting coffee from 187 washing stations in Burundi before honing in on the Gaharo Hill area to begin their Coffee Project.",
+    origin: "Bukeye Commune, Muramvya Province",
+    elevation: "1801m",
   },
 ];
 
