@@ -2,6 +2,7 @@
 
 const my_coffees = [
   {
+    id: "db5ef0ca-36ee-11e8-b467-0ed5f89f718b",
     roaster: "Phil & Sebastian",
     name: "Gaharo Hill",
     region: "Burundi",
@@ -15,6 +16,7 @@ const my_coffees = [
     elevation: "1801m",
   },
   {
+    id: "dfa66244-36ee-11e8-b467-0ed5f89f718b",
     roaster: "Phil & Sebastian",
     name: "Gatuyaini",
     region: "Kenya",
@@ -28,6 +30,7 @@ const my_coffees = [
     elevation: "1801m",
   },
   {
+    id: "dfa66b5e-36ee-11e8-b467-0ed5f89f718b",
     roaster: "La Cabra",
     name: "Pinheirnho",
     region: "Brazil",
@@ -41,6 +44,7 @@ const my_coffees = [
     elevation: "1801m",
   },
   {
+    id: "ea5a743c-36ee-11e8-b467-0ed5f89f718b",
     roaster: "Smile Tiger",
     name: "Nightmare Hippy Girl",
     region: "Nicaragua",

@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { StackNavigator } from "react-navigation";
 import t from "tcomb-form-native";
-import coffees from "../testdata/coffees";
+import { _norm } from "../utils/utils";
+import coffees from "../testdata/my_coffees";
 
 const { Form } = t.form;
 
@@ -22,7 +23,7 @@ class HomeScreen extends React.Component {
     const { inputValue } = this.state;
     const matchStr = Object.keys(coffee)
       .sort()
-      .map(k => _norm(coffee[k]))
+      .map(k => _norm(coffee[k].toString()))
       .join("");
     const search = _norm(inputValue);
     return matchStr.indexOf(search) >= 0;
@@ -68,7 +69,7 @@ class HomeScreen extends React.Component {
           <FlatList
             data={coffeesToShow}
             renderItem={({ item }) => <Coffee {...item} />}
-            keyExtractor={item => item.name}
+            keyExtractor={item => item.id}
           />
         </Fragment>
       );

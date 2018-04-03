@@ -1,6 +1,6 @@
 // Collection of helper functions
 
-const _norm = str => {
+export const _norm = str => {
   return str.toLowerCase().replace(/ /g, "");
 };
 
