@@ -1,0 +1,10 @@
+{
+  "lambda": {
+    "role": "bluum-server-executor",
+    "name": "bluum-server",
+    "region": "us-west-1"
+  },
+  "api": {
+    "id": "plcczn4vic"
+  }
+}

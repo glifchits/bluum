@@ -5,13 +5,9 @@ const express = require("express");
 const graphqlExpress = require("graphql-server-express").graphqlExpress;
 const graphiqlExpress = require("graphql-server-express").graphiqlExpress;
 
-const schema = require("./Schema").schema;
+const { schema } = require("./schema.js");
 
 const GraphQLServer = express().use("*", cors());
-
-GraphQLServer.get("/helloworld", (req, res) => {
-  res.send("hello world!");
-});
 
 // basic health route, ping /health to determine server health
 GraphQLServer.get("/health", (req, res) => {
@@ -23,13 +19,12 @@ GraphQLServer.get("/health", (req, res) => {
 GraphQLServer.use(
   "/graphiql",
   graphiqlExpress({
-    endpointURL: "/graphql",
+    endpointURL:
+      process.env.NODE_ENV === "production" ? "/latest/graphql" : "/graphql",
   }),
 );
 
 // graphql endpoint
 GraphQLServer.use("/", bodyParser.json(), graphqlExpress({ schema }));
 
-GraphQLServer.listen(3000, () => {
-  console.log(`GraphQL Server listening on port 3000`);
-});
+module.exports = GraphQLServer;
