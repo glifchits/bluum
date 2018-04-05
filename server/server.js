@@ -9,6 +9,10 @@ const schema = require("./Schema").schema;
 
 const GraphQLServer = express().use("*", cors());
 
+GraphQLServer.get("/helloworld", (req, res) => {
+  res.send("hello world!");
+});
+
 // basic health route, ping /health to determine server health
 GraphQLServer.get("/health", (req, res) => {
   res.sendStatus(200);
