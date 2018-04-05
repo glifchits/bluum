@@ -14,7 +14,7 @@ const typeDefs = `
   type Coffee {
     id: String!
     name: String!
-    roaster: Roaster
+    roaster: Roaster!
     regions: [String]
   }
 
