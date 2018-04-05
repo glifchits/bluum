@@ -1,3 +1,15 @@
 {
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "overrides": [
+    {
+      "files": ".prettierrc",
+      "options": { "parser": "json" }
+    },
+    {
+      "files": "package.json",
+      "options": {
+        "printWidth": 200
+      }
+    }
+  ]
 }
