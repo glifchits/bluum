@@ -19,10 +19,9 @@ exports.resolvers = {
     roaster: async coffee => {
       const q = `
         select id, name from coffee_roaster
-        where id = ${coffee.roaster_id};
+        where id = $1;
       `;
-      const x = await psql.manyOrNone(q);
-      return x[0];
+      return await psql.one(q, coffee.roaster_id);
     },
   },
 
@@ -31,9 +30,9 @@ exports.resolvers = {
       const q = `
         select id, name, roaster_id, regions
         from coffee_coffee
-        where roaster_id=${roaster.id};
+        where roaster_id = $1;
       `;
-      return await psql.manyOrNone(q);
+      return await psql.manyOrNone(q, roaster.id);
     },
   },
 };
