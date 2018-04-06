@@ -1,4 +1,4 @@
-// https://medium.com/@james_mensch/node-js-graphql-postgresql-quickstart-91ffa4374663
+// NOTE https://medium.com/@james_mensch/node-js-graphql-postgresql-quickstart-91ffa4374663
 const { GraphQLSchema } = require("graphql");
 const { makeExecutableSchema } = require("graphql-tools");
 
@@ -8,12 +8,15 @@ const typeDefs = `
   type Roaster {
     id: String!
     name: String!
+    location: String
     coffees: [Coffee]
   }
 
   type Coffee {
     id: String!
     name: String!
+    roast_type: String
+    roast_style: String
     roaster: Roaster!
     regions: [String]
   }
