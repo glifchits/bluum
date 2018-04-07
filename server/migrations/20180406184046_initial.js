@@ -22,16 +22,40 @@ exports.up = function(knex, Promise) {
       t.string("roast_type"); // filter, espresso
       t.jsonb("regions");
       t.jsonb("metadata");
-      t.integer("roaster_id").unsigned();
-      t.foreign("roaster_id").references("roasters.id");
+      t
+        .integer("roaster_id")
+        .unsigned()
+        .references("roasters.id")
+        .onDelete("SET NULL");
     });
   }
-  return createRoastersTable().then(createCoffeesTable);
+  // brews table
+  function createBrewsTable() {
+    return knex.schema.createTable("brews", t => {
+      t.increments("id");
+      t.timestamps(true, true);
+      t.bigInteger("coffee_id").unsigned();
+      t
+        .foreign("coffee_id")
+        .references("coffees.id")
+        .onDelete("SET NULL");
+      t.decimal("rating", 5, 2); // precision=5, scale=2 (999.99)
+      t.string("method");
+      t.jsonb("flavours");
+      t.text("notes");
+      t.jsonb("metadata");
+    });
+  }
+
+  return createRoastersTable()
+    .then(createCoffeesTable)
+    .then(createBrewsTable);
 };
 
 exports.down = function(knex, Promise) {
   return Promise.all([
     knex.schema.dropTableIfExists("coffees"),
     knex.schema.dropTableIfExists("roasters"),
+    knex.schema.dropTableIfExists("brews"),
   ]);
 };
