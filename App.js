@@ -1,8 +1,36 @@
 import React from "react";
-import App from "./src/App.js";
+import Router from "./src/Router.js";
+import { Font } from "expo";
+import { Text } from "react-native";
 
-// this is here in case we want to add any providers
-// I was fooling around with ApolloProvider but decided not to use it
-const RootApp = () => <App />;
+class Loader extends React.Component {
+  render() {
+    return <Text>Loading...</Text>;
+  }
+}
 
-export default RootApp;
+export default class AppContainer extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      fontLoaded: false,
+    };
+  }
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      "avenir-next-regular": require("./src/assets/fonts/AvenirNextLTPro-Regular.otf"),
+      "avenir-next-bold": require("./src/assets/fonts/AvenirNextLTPro-Bold.otf"),
+    });
+
+    this.setState({ fontLoaded: true });
+  }
+
+  render() {
+    if (this.state.fontLoaded) {
+      return <Router />;
+    }
+    return <Loader />;
+  }
+}

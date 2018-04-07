@@ -11,6 +11,7 @@ import { StackNavigator } from "react-navigation";
 import t from "tcomb-form-native";
 import { _norm } from "../utils/utils";
 import coffees from "../testdata/my_coffees";
+import { Font } from "expo";
 
 const { Form } = t.form;
 
@@ -35,14 +36,14 @@ class HomeScreen extends React.Component {
     if (inputValue.length === 0) {
       body = (
         <Fragment>
-          <Text style={{ fontWeight: "bold", fontSize: 26 }}>COOL BEANZ</Text>
+          <Text style={styles.appTitle}>COOL BEANS</Text>
           <TextInput
             key="searchTextInput"
             placeholder="Search coffee"
             onChangeText={this._handleSearchChange}
             style={styles.searchInput}
           />
-          <Text>Recently brewed coffee</Text>
+          <Text style={styles.text}>Recently brewed coffee</Text>
         </Fragment>
       );
     } else {
@@ -180,6 +181,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  appTitle: {
+    color: "#654241",
+    fontSize: 24,
+    fontWeight: "700",
+    width: 300,
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    fontFamily: "avenir-next-bold",
+  },
+  text: {
+    fontFamily: "avenir-next-regular",
+    fontSize: 16,
+    color: "#1C1713",
   },
   addContainer: {
     flex: 1,
