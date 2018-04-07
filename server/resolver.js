@@ -13,6 +13,9 @@ exports.resolvers = {
       const q = `select * from coffees;`;
       return await psql.manyOrNone(q);
     },
+    async brews() {
+      return await psql.manyOrNone(`select * from brews;`);
+    },
   },
 
   Coffee: {
@@ -34,5 +37,10 @@ exports.resolvers = {
       `;
       return await psql.manyOrNone(q, roaster.id);
     },
+  },
+
+  Brew: {
+    coffee: brew =>
+      psql.one(`select * from coffees where id = $1`, brew.coffee_id),
   },
 };
