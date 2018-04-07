@@ -13,7 +13,7 @@ const MyCoffeeStack = StackNavigator({
   Brew: { screen: BrewScreen },
 });
 
-const App = TabNavigator(
+const Router = TabNavigator(
   {
     MyCoffee: {
       screen: MyCoffeeStack,
@@ -38,6 +38,7 @@ const App = TabNavigator(
           <Ionicons
             name={focused ? "ios-search" : "ios-search-outline"}
             size={26}
+            K
             style={{ color: tintColor }}
           />
         ),
@@ -67,4 +68,4 @@ const App = TabNavigator(
   },
 );
 
-export default App;
+export default Router;
