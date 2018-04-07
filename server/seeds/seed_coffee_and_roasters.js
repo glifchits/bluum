@@ -26,13 +26,13 @@ const my_coffees = [
   },
   {
     name: "Guarnizo Bros.",
-    regions: "Colombia",
+    region: "Colombia",
     type: "Filter",
     roaster: "Phil & Sebastian",
   },
   {
     name: "Hartmanns' Maragogype",
-    regions: "Panama",
+    region: "Panama",
     type: "Filter",
     roaster: "Phil & Sebastian",
   },
@@ -60,22 +60,22 @@ const my_coffees = [
   {
     name: "Santa Teresa",
     type: "Espresso",
-    regions: "Costa Rica",
+    region: "Costa Rica",
     roaster: "Detour Coffee Roasters",
   },
   {
     name: "Smart Ass",
-    regions: "Africa, Central America, South America",
+    region: "Africa, Central America, South America",
     roaster: "Kicking Horse",
   },
   {
     name: "Hola",
-    regions: "Central America, South America",
+    region: "Central America, South America",
     roaster: "Kicking Horse",
   },
   {
     name: "Cachoeira MicroLot",
-    regions: "Brazil",
+    region: "Brazil",
     origin: "Cachoeira Farm",
     roaster: "Detour Coffee Roasters",
   },
