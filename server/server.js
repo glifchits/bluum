@@ -2,8 +2,7 @@
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const express = require("express");
-const graphqlExpress = require("graphql-server-express").graphqlExpress;
-const graphiqlExpress = require("graphql-server-express").graphiqlExpress;
+const { graphqlExpress, graphiqlExpress } = require("apollo-server-express");
 
 const { schema } = require("./schema.js");
 
