@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { LIGHT_BROWN } from "../styles/common";
 
 export default class Rating extends React.Component {
   render() {
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
     marginRight: 2,
   },
   filled: {
-    backgroundColor: "#3e92d4",
+    backgroundColor: LIGHT_BROWN,
     width: 10,
     height: 10,
     borderRadius: 100,

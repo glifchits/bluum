@@ -1,250 +1,184 @@
-import React, { Fragment } from "react";
+import React from "react";
 import {
-  StyleSheet,
-  Text,
-  FlatList,
   View,
   TextInput,
-  Button,
+  Text,
+  FlatList,
+  StyleSheet,
+  Platform,
+  ScrollView,
+  Dimensions,
+  TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
-import { StackNavigator } from "react-navigation";
-import t from "tcomb-form-native";
-import { _norm } from "../utils/utils";
-import coffees from "../testdata/my_coffees";
-import { Font } from "expo";
+import { Icon } from "react-native-elements";
+import {
+  LIGHT_BROWN,
+  BORDER_RADIUS,
+  OFF_BLACK,
+  BROWN,
+  FONT_REG,
+  FONT_BOLD,
+} from "../styles/common";
+import coffee from "../testdata/my_coffees";
+import { filterCoffee } from "../utils/utils";
+import CoffeeCard from "../components/CoffeeCard";
 
-const { Form } = t.form;
+const STATUS_BAR_OFFSET = 35;
+const GUTTER = 10;
+const WIDTH = Dimensions.get("window").width;
 
-class HomeScreen extends React.Component {
-  state = { inputValue: "" };
+export default class SearchScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      inputValue: "",
+    };
+
+    this.clearSearch = this.clearSearch.bind(this);
+    this.handleSelectCoffee = this.handleSelectCoffee.bind(this);
+  }
+
+  static navigationOptions = {
+    header: null,
+  };
 
   _handleSearchChange = inputValue => this.setState({ inputValue });
 
-  filterCoffee = coffee => {
-    const { inputValue } = this.state;
-    const matchStr = Object.keys(coffee)
-      .sort()
-      .map(k => _norm(coffee[k].toString()))
-      .join("");
-    const search = _norm(inputValue);
-    return matchStr.indexOf(search) >= 0;
-  };
+  handleSelectCoffee(coffee) {
+    this.props.navigation.navigate("CoffeeProfile", {
+      coffee: coffee,
+    });
+  }
+
+  clearSearch() {
+    this.setState({ inputValue: "" });
+  }
 
   render() {
     const { inputValue } = this.state;
-    let body;
-    if (inputValue.length === 0) {
-      body = (
-        <Fragment>
-          <Text style={styles.appTitle}>COOL BEANS</Text>
-          <TextInput
-            key="searchTextInput"
-            placeholder="Search coffee"
-            onChangeText={this._handleSearchChange}
-            style={styles.searchInput}
-          />
-          <Text style={styles.text}>Recently brewed coffee</Text>
-        </Fragment>
-      );
-    } else {
-      const coffeesToShow = coffees.filter(this.filterCoffee);
-      const addNewButton =
-        coffeesToShow.length <= 1 ? (
-          <Button
+    const filteredCoffee = coffee.filter(coffee =>
+      filterCoffee(coffee, inputValue),
+    );
+
+    return (
+      <View style={styles.screenContainer} forceInset={{ top: "always" }}>
+        <View style={styles.searchBarContainer}>
+          <View style={styles.searchBox}>
+            <Icon
+              style={styles.icon}
+              type="material"
+              name="chevron-left"
+              color={LIGHT_BROWN}
+              onPress={() => this.props.navigation.goBack()}
+            />
+            <TextInput
+              autoFocus
+              key="searchTextInput"
+              autoCorrect={false}
+              spellCheck={false}
+              value={inputValue}
+              placeholder="Search coffee"
+              onChangeText={this._handleSearchChange}
+              style={styles.searchInput}
+              underlineColorAndroid="transparent"
+            />
+            <Icon
+              style={styles.icon}
+              type="material"
+              name="close"
+              color={LIGHT_BROWN}
+              onPress={this.clearSearch}
+            />
+          </View>
+        </View>
+        {inputValue.length > 0 ? (
+          <TouchableOpacity
+            style={styles.addCoffeeContainer}
             onPress={() => this.props.navigation.navigate("AddNewCoffee")}
-            title={`Can't find ${this.state.inputValue}? Add it!`}
-          />
-        ) : null;
-      body = (
-        <Fragment>
-          <TextInput
-            key="searchTextInput"
-            autoCorrect={false}
-            spellCheck={false}
-            value={inputValue}
-            placeholder="Search coffee"
-            onChangeText={this._handleSearchChange}
-            style={styles.searchInputActive}
-          />
-          {addNewButton}
+          >
+            <Text
+              style={styles.addCoffeePreface}
+            >{`Can't find ${inputValue}?`}</Text>
+            <View style={styles.addContainer}>
+              <Text style={styles.addCoffeeLink}>Add it</Text>
+              <Icon
+                type="material"
+                name="chevron-right"
+                color={BROWN}
+                size={18}
+                style={styles.addArrow}
+              />
+            </View>
+          </TouchableOpacity>
+        ) : null}
+        <ScrollView style={styles.resultsContainer}>
           <FlatList
-            data={coffeesToShow}
-            renderItem={({ item }) => <Coffee {...item} />}
+            data={filteredCoffee}
+            renderItem={({ item }) => (
+              <CoffeeCard coffee={item} onPress={this.handleSelectCoffee} />
+            )}
             keyExtractor={item => item.id}
           />
-        </Fragment>
-      );
-    }
-
-    return <View style={styles.container}>{body}</View>;
-  }
-}
-
-const Coffee = ({ name, region, roaster }) => (
-  <View style={{ borderWidth: 1, borderColor: "#ddd", padding: 10 }}>
-    <Text style={{ fontWeight: "bold" }}>{name}</Text>
-    <Text>{region}</Text>
-    <Text>{roaster}</Text>
-  </View>
-);
-
-const CoffeeType = t.struct({
-  name: t.String,
-  region: t.maybe(t.String),
-});
-
-class AddNewCoffee extends React.Component {
-  state = {
-    form: this.props.navigation.getParam("prevFormState", null),
-  };
-
-  onPress = e => {
-    const { params } = this.props.navigation.state;
-    const roaster = params && params.roaster;
-    if (!roaster) {
-      console.log("roaster not selected");
-      return;
-    }
-    const { form } = this.state;
-    if (!form) {
-      console.log("form incomplete");
-      return;
-    }
-    const coffee = {
-      ...form,
-      roaster,
-    };
-    console.log("onPress", coffee);
-  };
-
-  renderRoaster = () => {
-    const { params } = this.props.navigation.state;
-    return (
-      <Text
-        style={{ marginBottom: 20 }}
-        onPress={() =>
-          this.props.navigation.replace("SelectRoaster", {
-            prevFormState: this.state.form,
-          })
-        }
-      >
-        {!params || !params.roaster
-          ? "No roaster selected"
-          : `Roaster: ${params.roaster}`}
-      </Text>
-    );
-  };
-
-  render() {
-    return (
-      <View style={styles.addContainer}>
-        <Form
-          value={this.state.form}
-          onChange={form => this.setState({ form })}
-          type={CoffeeType}
-        />
-        {this.renderRoaster()}
-        <Button onPress={this.onPress} title="Add" />
+        </ScrollView>
       </View>
     );
   }
 }
 
-class SelectRoaster extends React.Component {
-  selectRoaster = roaster => evt => {
-    // this.props.navigation.pop();
-    this.props.navigation.replace("AddNewCoffee", {
-      roaster,
-      prevFormState: this.props.navigation.getParam("prevFormState", null),
-    });
-  };
-
-  render() {
-    const roasters = Array.from(new Set(coffees.map(c => c.roaster))).sort();
-    return (
-      <FlatList
-        data={roasters}
-        renderItem={({ item }) => (
-          <Text style={styles.Roaster} onPress={this.selectRoaster(item)}>
-            {item}
-          </Text>
-        )}
-        keyExtractor={i => i}
-      />
-    );
-  }
-}
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  screenContainer: {
     backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  appTitle: {
-    color: "#654241",
-    fontSize: 24,
-    fontWeight: "700",
-    width: 300,
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
-    fontFamily: "avenir-next-bold",
-  },
-  text: {
-    fontFamily: "avenir-next-regular",
-    fontSize: 16,
-    color: "#1C1713",
-  },
-  addContainer: {
     flex: 1,
+  },
+  searchBarContainer: {
+    backgroundColor: LIGHT_BROWN,
+    padding: GUTTER,
+    paddingTop: Platform.OS === "android" ? STATUS_BAR_OFFSET : GUTTER,
+  },
+  searchBox: {
     backgroundColor: "#fff",
-    padding: 20,
+    borderRadius: BORDER_RADIUS,
+    flexDirection: "row",
+    padding: 5,
   },
   searchInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    width: 230,
-    height: 40,
-    padding: 5,
-    marginTop: 20,
-    marginBottom: 40,
+    marginLeft: 10,
+    color: OFF_BLACK,
+    flexGrow: 1,
+    fontSize: 18,
   },
-  searchInputActive: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    width: "100%",
-    height: 40,
-    padding: 5,
-    margin: 30,
+  icon: {
+    flexGrow: 0,
   },
-  Roaster: {
-    height: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+  resultsContainer: {
+    padding: GUTTER,
   },
-});
-
-const SearchScreen = StackNavigator({
-  Home: {
-    screen: HomeScreen,
-    navigationOptions: {
-      header: null,
-    },
+  addCoffeeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F2E3D5",
+    paddingLeft: GUTTER,
+    paddingRight: GUTTER,
+    paddingTop: 8,
+    paddingBottom: 8,
   },
-  AddNewCoffee: {
-    screen: AddNewCoffee,
-    navigationOptions: {
-      title: "Add a new coffee",
-    },
+  addCoffeePreface: {
+    color: OFF_BLACK,
+    marginRight: 10,
+    fontFamily: FONT_REG,
   },
-  SelectRoaster: {
-    screen: SelectRoaster,
-    navigationOptions: {
-      title: "Select roaster",
-    },
+  addCoffeeLink: {
+    color: BROWN,
+    fontFamily: FONT_BOLD,
+  },
+  addContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addArrow: {
+    margin: 0,
+    padding: 0,
   },
 });
-
-export default SearchScreen;

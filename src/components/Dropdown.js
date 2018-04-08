@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { Icon, Button } from "react-native-elements";
+import { FONT_REG, OFF_BLACK, BROWN, LIGHT_BROWN } from "../styles/common";
 
 export default class Dropdown extends React.Component {
   constructor(props) {
@@ -49,7 +50,11 @@ export default class Dropdown extends React.Component {
     );
 
     const androidPicker = (
-      <Picker selectedValue={selectedValue} onValueChange={onValueChange}>
+      <Picker
+        selectedValue={selectedValue}
+        onValueChange={onValueChange}
+        style={styles.androidPicker}
+      >
         {this.renderOptions(options)}
       </Picker>
     );
@@ -93,6 +98,7 @@ const styles = StyleSheet.create({
   label: {
     width: 60,
     flex: 0,
+    fontFamily: FONT_REG,
   },
   dropdownContainer: {
     flex: 3,
