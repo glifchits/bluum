@@ -1,14 +1,18 @@
 // NOTE https://medium.com/@james_mensch/node-js-graphql-postgresql-quickstart-91ffa4374663
 const { GraphQLSchema } = require("graphql");
 const { makeExecutableSchema } = require("graphql-tools");
+const GraphQLJSON = require("graphql-type-json");
 
 const { resolvers } = require("./resolver.js");
 
 const typeDefs = `
   scalar Date
+  scalar JSON
 
   type Roaster {
     id: ID!
+    created_at: Date!
+    updated_at: Date!
     name: String!
     location: String
     coffees: [Coffee]
@@ -16,11 +20,14 @@ const typeDefs = `
 
   type Coffee {
     id: ID!
+    created_at: Date!
+    updated_at: Date!
     name: String!
     roast_type: String
     roast_style: String
     roaster: Roaster!
     regions: [String]
+    metadata: JSON
   }
 
   type Brew {
@@ -32,7 +39,7 @@ const typeDefs = `
     flavours: [String]
     method: String
     notes: String
-    # metadata: String
+    metadata: JSON
   }
 
   # the following queries are allowed
@@ -46,5 +53,8 @@ const typeDefs = `
 
 exports.schema = makeExecutableSchema({
   typeDefs,
-  resolvers,
+  resolvers: {
+    ...resolvers,
+    JSON: GraphQLJSON,
+  },
 });
