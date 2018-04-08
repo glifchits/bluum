@@ -1,7 +1,7 @@
 import React from "react";
 import Router from "./src/Router.js";
 import { Font } from "expo";
-import { Text } from "react-native";
+import { Text, SafeAreaView, StyleSheet } from "react-native";
 
 class Loader extends React.Component {
   render() {
@@ -29,8 +29,19 @@ export default class AppContainer extends React.Component {
 
   render() {
     if (this.state.fontLoaded) {
-      return <Router />;
+      return (
+        <SafeAreaView style={styles.SafeArea}>
+          <Router />
+        </SafeAreaView>
+      );
     }
     return <Loader />;
   }
 }
+
+const styles = StyleSheet.create({
+  SafeArea: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+});
