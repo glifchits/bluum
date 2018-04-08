@@ -1,6 +1,8 @@
 import React from "react";
+import ApolloClient from "apollo-boost";
 import Router from "./src/Router.js";
 import { Font } from "expo";
+import { ApolloProvider } from "react-apollo";
 import { Text, SafeAreaView, StyleSheet } from "react-native";
 
 class Loader extends React.Component {
@@ -19,6 +21,13 @@ export default class AppContainer extends React.Component {
   }
 
   async componentDidMount() {
+    this.client = new ApolloClient({
+      uri:
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:3000/graphql"
+          : "https://plcczn4vic.execute-api.us-west-1.amazonaws.com/latest/graphql",
+    });
+
     await Font.loadAsync({
       "avenir-next-regular": require("./src/assets/fonts/AvenirNextLTPro-Regular.otf"),
       "avenir-next-bold": require("./src/assets/fonts/AvenirNextLTPro-Bold.otf"),
@@ -30,9 +39,11 @@ export default class AppContainer extends React.Component {
   render() {
     if (this.state.fontLoaded) {
       return (
-        <SafeAreaView style={styles.SafeArea}>
-          <Router />
-        </SafeAreaView>
+        <ApolloProvider client={this.client}>
+          <SafeAreaView style={styles.SafeArea}>
+            <Router />
+          </SafeAreaView>
+        </ApolloProvider>
       );
     }
     return <Loader />;

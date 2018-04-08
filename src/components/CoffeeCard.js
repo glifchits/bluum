@@ -33,7 +33,7 @@ export default class CoffeeCard extends React.Component {
           </View>
           <View style={styles.infoContainer}>
             <Text style={styles.name}>{coffee.name}</Text>
-            <Text tyle={styles.roaster}>{coffee.roaster}</Text>
+            <Text style={styles.roaster}>{coffee.roaster.name}</Text>
             <Rating rating={coffee.rating} ratingCount={5} />
           </View>
         </View>

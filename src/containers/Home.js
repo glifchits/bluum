@@ -1,4 +1,6 @@
 import React, { Fragment } from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import {
   StyleSheet,
   Text,
@@ -30,17 +32,37 @@ const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 
 const RecentlyBrewed = ({ handleSelectCoffee }) => {
-  const coffeesToShow = coffees.slice(0, 3);
+  const RECENT_COFFEES = gql`
+    {
+      coffee(limit: 2) {
+        id
+        name
+        roaster {
+          name
+        }
+      }
+    }
+  `;
   return (
     <React.Fragment>
       <Text style={styles.text}>Recently brewed coffee</Text>
-      <FlatList
-        data={coffeesToShow}
-        renderItem={({ item, index }) => (
-          <CoffeeCard coffee={item} onPress={handleSelectCoffee} />
-        )}
-        keyExtractor={item => item.id}
-      />
+      <Query query={RECENT_COFFEES}>
+        {({ loading, error, data }) => {
+          if (loading) return <Text>Loading...</Text>;
+          if (error || !data.coffee.length) {
+            return <Text>You should brew something!</Text>;
+          }
+          return (
+            <FlatList
+              data={data.coffee}
+              renderItem={({ item, index }) => (
+                <CoffeeCard coffee={item} onPress={handleSelectCoffee} />
+              )}
+              keyExtractor={item => item.id}
+            />
+          );
+        }}
+      </Query>
     </React.Fragment>
   );
 };
