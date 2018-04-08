@@ -1,4 +1,6 @@
 import React, { Fragment } from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import {
   StyleSheet,
   Text,
@@ -152,13 +154,32 @@ export default class MyCoffeeScreen extends React.Component {
           options={SORT_OPTIONS}
         />
         <ScrollView style={styles.resultsContainer}>
-          <FlatList
-            data={sortedCoffee}
-            renderItem={({ item }) => (
-              <CoffeeCard coffee={item} onPress={this.handleSelectCoffee} />
-            )}
-            keyExtractor={item => item.id}
-          />
+          <Query
+            query={gql`
+              {
+                coffee(limit: 10) {
+                  id
+                }
+              }
+            `}
+          >
+            {({ loading, error, data }) => {
+              if (loading) return <Text>Loading...</Text>;
+              if (error) return <Text>Error :(</Text>;
+              return (
+                <FlatList
+                  data={data.coffee}
+                  renderItem={({ item }) => (
+                    <CoffeeCard
+                      coffeeID={item.id}
+                      onPress={() => this.handleSelectCoffee(item.id)}
+                    />
+                  )}
+                  keyExtractor={item => item.id}
+                />
+              );
+            }}
+          </Query>
         </ScrollView>
       </View>
     );

@@ -18,7 +18,7 @@ import Rating from "./Rating";
 
 const CUP_SIZE = 70;
 
-const CoffeeCard = ({ coffeeID }) => {
+const CoffeeCard = ({ coffeeID, onPress }) => {
   const COFFEE_QUERY = gql`
     query Coffee($id: ID!) {
       coffee(id: $id) {
@@ -38,7 +38,7 @@ const CoffeeCard = ({ coffeeID }) => {
         if (error) return <Text>Error:(</Text>;
         const coffee = data.coffee[0];
         return (
-          <TouchableOpacity onPress={() => this.props.onPress(coffee)}>
+          <TouchableOpacity onPress={onPress}>
             <View style={styles.card}>
               <View style={styles.imageContainer}>
                 <Image
