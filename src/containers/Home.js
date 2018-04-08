@@ -29,6 +29,22 @@ const { Form } = t.form;
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 
+const RecentlyBrewed = ({ handleSelectCoffee }) => {
+  const coffeesToShow = coffees.slice(0, 3);
+  return (
+    <React.Fragment>
+      <Text style={styles.text}>Recently brewed coffee</Text>
+      <FlatList
+        data={coffeesToShow}
+        renderItem={({ item, index }) => (
+          <CoffeeCard coffee={item} onPress={handleSelectCoffee} />
+        )}
+        keyExtractor={item => item.id}
+      />
+    </React.Fragment>
+  );
+};
+
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -36,8 +52,6 @@ export default class HomeScreen extends React.Component {
     this.state = {
       inputValue: "",
     };
-
-    this.handleSelectCoffee = this.handleSelectCoffee.bind(this);
   }
 
   static navigationOptions = {
@@ -45,35 +59,16 @@ export default class HomeScreen extends React.Component {
   };
 
   _handleSearchChange = inputValue => this.setState({ inputValue });
+
   _handleSearchClear = () => this.setState({ inputvalue: "" });
 
-  handleSelectCoffee(coffee) {
+  handleSelectCoffee = coffee => {
     this.props.navigation.navigate("CoffeeProfile", {
       coffee: coffee,
     });
-  }
-
-  filterCoffee = coffee => {
-    const { inputValue } = this.state;
-    const matchStr = Object.keys(coffee)
-      .sort()
-      .map(k => _norm(coffee[k].toString()))
-      .join("");
-    const search = _norm(inputValue);
-    return matchStr.indexOf(search) >= 0;
   };
 
-  renderRecentCoffee(item, index) {
-    // Show only the first 3 coffees
-    if (index > 2) {
-      return null;
-    }
-    return <CoffeeCard coffee={item} onPress={this.handleSelectCoffee} />;
-  }
-
   render() {
-    const { inputValue } = this.state;
-
     return (
       <View style={styles.container}>
         <View style={styles.logoContainer}>
@@ -97,14 +92,7 @@ export default class HomeScreen extends React.Component {
               placeholderTextColor={LIGHT_BROWN}
             />
           </View>
-          <Text style={styles.text}>Recently brewed coffee</Text>
-          <FlatList
-            data={coffees}
-            renderItem={({ item, index }) =>
-              this.renderRecentCoffee(item, index)
-            }
-            keyExtractor={item => item.id}
-          />
+          <RecentlyBrewed handleSelectCoffee={this.handleSelectCoffee} />
         </View>
       </View>
     );
