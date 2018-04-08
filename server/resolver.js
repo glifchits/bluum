@@ -9,15 +9,21 @@ exports.resolvers = {
       const query = `select * from roasters ${id ? "where id = $1" : ""};`;
       return await psql.manyOrNone(query, id);
     },
-    async coffee(_, { id }) {
+    async coffee(_, { id, limit, offset = 0 }) {
       let where = id ? "where id = $1" : "";
-      const q = `select * from coffees ${where}`;
+      let limitClause = `order by id limit ${limit} offset ${offset}`;
+      const q = `select * from coffees ${where} ${limitClause};`;
       return await psql.manyOrNone(q, id);
     },
-    async brews(_, { id }) {
-      let where = id ? "where id = $1" : "";
-      let q = `select * from brews ${where};`;
-      return await psql.manyOrNone(q, id);
+    async brews(_, { id, limit, offset = 0 }) {
+      let limitClause = limit
+        ? `order by id desc limit ${limit} offset ${offset}`
+        : "";
+      let wheres = [];
+      if (id) wheres.push(`id = ${id}`);
+      let whereClause = wheres.length ? `where ${wheres.join(" and ")}` : "";
+      let q = `select * from brews ${whereClause} ${limitClause};`;
+      return await psql.manyOrNone(q);
     },
   },
 

@@ -46,8 +46,8 @@ const typeDefs = `
   # e.g. https://www.apollographql.com/docs/graphql-tools/generate-schema.html#example
   type Query {
     roasters(id: ID): [Roaster]!,
-    coffee(id: ID): [Coffee]!
-    brews(id: ID): [Brew]!
+    coffee(id: ID, limit: Int, offset: Int): [Coffee]!
+    brews(id: ID, limit: Int, offset: Int): [Brew]!
   }
 `;
 
