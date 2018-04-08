@@ -68,10 +68,8 @@ export default class MyCoffeeScreen extends React.Component {
     this.setState({ searchTerm: inputValue });
   }
 
-  handleSelectCoffee(coffee) {
-    this.props.navigation.navigate("CoffeeProfile", {
-      coffee: coffee,
-    });
+  handleSelectCoffee(coffeeID) {
+    this.props.navigation.navigate("CoffeeProfile", { coffeeID });
   }
 
   clearSearch() {

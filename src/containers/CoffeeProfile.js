@@ -1,4 +1,6 @@
 import React from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import {
   Header,
@@ -63,7 +65,7 @@ export default class CoffeeProfileScreen extends React.Component {
   render() {
     // Pulls in coffee from the params passed in from My Coffee screen
     const { params } = this.props.navigation.state;
-    const { coffee } = params;
+    const { coffeeID } = params;
     const { sortBy } = this.state;
 
     const sortedBrews = sortCoffee(sortBy, brews);
@@ -98,69 +100,94 @@ export default class CoffeeProfileScreen extends React.Component {
       </View>
     );
 
-    const coffeeInfoBody = (
-      <View>
-        <List>
-          <ListItem
-            key="description"
-            title="Description"
-            subtitle={coffee.description}
-            hideChevron
-            subtitleNumberOfLines={5}
-          />
-          <ListItem
-            key="origin"
-            title="Origin"
-            subtitle={coffee.origin}
-            hideChevron
-            subtitleNumberOfLines={5}
-          />
-          <ListItem
-            key="elevation"
-            title="Elevation"
-            subtitle={coffee.elevation}
-            hideChevron
-            subtitleNumberOfLines={5}
-          />
-        </List>
-      </View>
-    );
+    const GET_COFFEE = gql`
+      query CoffeeDetails($id: ID!) {
+        coffee(id: $id) {
+          id
+          name
+          roaster {
+            name
+          }
+        }
+      }
+    `;
 
     return (
-      <View style={styles.container}>
-        <Header
-          leftComponent={
-            <Icon
-              name="arrow-back"
-              color="#fff"
-              onPress={() => this.props.navigation.goBack()}
-            />
-          }
-          centerComponent={{ text: coffee.name, style: { color: "#fff" } }}
-          outerContainerStyles={{ backgroundColor: "#8b8c8c" }}
-          innerContainerStyles={{ justifyContent: "space-between" }}
-        />
-        <ScrollView style={styles.body}>
-          <CoffeeSummary coffee={coffee} />
-          <ButtonGroup
-            onPress={this.changeTab}
-            selectedIndex={this.state.selectedTab}
-            buttons={TABS}
-            containerStyle={{ height: 50, marginTop: 20 }}
-          />
-          {this.state.selectedTab === 0 ? myBrewsBody : coffeeInfoBody}
-        </ScrollView>
-        <View style={styles.buttonBar}>
-          <Button
-            fontWeight="700"
-            backgroundColor="#8b8c8c"
-            color="#fff"
-            borderRadius={3}
-            title="Add a Brew"
-            onPress={() => this.handleAddBrew(coffee)}
-          />
-        </View>
-      </View>
+      <Query query={GET_COFFEE} variables={{ id: coffeeID }}>
+        {({ loading, error, data }) => {
+          if (loading) return <Text>Loading...</Text>;
+          if (error) return <Text>Error:(</Text>;
+          const coffee = data.coffee[0];
+
+          return (
+            <View style={styles.container}>
+              <Header
+                leftComponent={
+                  <Icon
+                    name="arrow-back"
+                    color="#fff"
+                    onPress={() => this.props.navigation.goBack()}
+                  />
+                }
+                centerComponent={{
+                  text: coffee.name,
+                  style: { color: "#fff" },
+                }}
+                outerContainerStyles={{ backgroundColor: "#8b8c8c" }}
+                innerContainerStyles={{ justifyContent: "space-between" }}
+              />
+              <ScrollView style={styles.body}>
+                <CoffeeSummary coffee={coffee} />
+                <ButtonGroup
+                  onPress={this.changeTab}
+                  selectedIndex={this.state.selectedTab}
+                  buttons={TABS}
+                  containerStyle={{ height: 50, marginTop: 20 }}
+                />
+                {this.state.selectedTab === 0 ? (
+                  myBrewsBody
+                ) : (
+                  <View>
+                    <List>
+                      <ListItem
+                        key="description"
+                        title="Description"
+                        subtitle={coffee.description}
+                        hideChevron
+                        subtitleNumberOfLines={5}
+                      />
+                      <ListItem
+                        key="origin"
+                        title="Origin"
+                        subtitle={coffee.origin}
+                        hideChevron
+                        subtitleNumberOfLines={5}
+                      />
+                      <ListItem
+                        key="elevation"
+                        title="Elevation"
+                        subtitle={coffee.elevation}
+                        hideChevron
+                        subtitleNumberOfLines={5}
+                      />
+                    </List>
+                  </View>
+                )}
+              </ScrollView>
+              <View style={styles.buttonBar}>
+                <Button
+                  fontWeight="700"
+                  backgroundColor="#8b8c8c"
+                  color="#fff"
+                  borderRadius={3}
+                  title="Add a Brew"
+                  onPress={() => this.handleAddBrew(coffee)}
+                />
+              </View>
+            </View>
+          );
+        }}
+      </Query>
     );
   }
 }

@@ -51,8 +51,11 @@ const RecentlyBrewed = ({ handleSelectCoffee }) => {
           return (
             <FlatList
               data={data.coffee}
-              renderItem={({ item, index }) => (
-                <CoffeeCard coffeeID={item.id} onPress={handleSelectCoffee} />
+              renderItem={({ item }) => (
+                <CoffeeCard
+                  coffeeID={item.id}
+                  onPress={() => handleSelectCoffee(item.id)}
+                />
               )}
               keyExtractor={item => item.id}
             />
@@ -80,10 +83,8 @@ export default class HomeScreen extends React.Component {
 
   _handleSearchClear = () => this.setState({ inputvalue: "" });
 
-  handleSelectCoffee = coffee => {
-    this.props.navigation.navigate("CoffeeProfile", {
-      coffee: coffee,
-    });
+  handleSelectCoffee = coffeeID => {
+    this.props.navigation.navigate("CoffeeProfile", { coffeeID });
   };
 
   render() {
