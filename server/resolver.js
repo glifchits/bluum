@@ -11,8 +11,10 @@ exports.resolvers = {
     },
     async coffee(_, { id, limit, offset = 0 }) {
       let where = id ? "where id = $1" : "";
-      let limitClause = `order by id limit ${limit} offset ${offset}`;
-      const q = `select * from coffees ${where} ${limitClause};`;
+      let limitClause = limit
+        ? `order by id limit ${limit} offset ${offset}`
+        : "";
+      const q = `select * from coffees ${limitClause} ${where};`;
       return await psql.manyOrNone(q, id);
     },
     async brews(_, { id, limit, offset = 0 }) {
