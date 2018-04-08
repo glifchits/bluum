@@ -36,10 +36,6 @@ const RecentlyBrewed = ({ handleSelectCoffee }) => {
     {
       coffee(limit: 2) {
         id
-        name
-        roaster {
-          name
-        }
       }
     }
   `;
@@ -56,7 +52,7 @@ const RecentlyBrewed = ({ handleSelectCoffee }) => {
             <FlatList
               data={data.coffee}
               renderItem={({ item, index }) => (
-                <CoffeeCard coffee={item} onPress={handleSelectCoffee} />
+                <CoffeeCard coffeeID={item.id} onPress={handleSelectCoffee} />
               )}
               keyExtractor={item => item.id}
             />
