@@ -108,9 +108,7 @@ export default class Dropdown extends React.Component {
       <View style={styles.container}>
         {label ? <Text style={styles.label}>{label}</Text> : null}
         <View style={styles.dropdownContainer}>
-          {this.state.showPicker && Platform.OS === "android"
-            ? androidPicker
-            : dropdown}
+          {Platform.OS === "android" ? androidPicker : dropdown}
         </View>
         {this.state.showPicker && Platform.OS === "ios" ? iOSPicker : null}
       </View>

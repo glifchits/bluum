@@ -7,6 +7,7 @@ import {
   Picker,
   TextInput,
   ScrollView,
+  Platform,
 } from "react-native";
 import { Header, List, ListItem, Icon } from "react-native-elements";
 import Rating from "../components/Rating";
@@ -31,6 +32,8 @@ const SORT_OPTIONS = [
   { label: "Rating", value: "rating" },
   { label: "Date Added", value: "dateAdded" },
 ];
+
+const STATUS_BAR_OFFSET = 35;
 
 export default class MyCoffeeScreen extends React.Component {
   constructor(props) {
@@ -186,7 +189,7 @@ const styles = StyleSheet.create({
     backgroundColor: LIGHT_BROWN,
     flexDirection: "row",
     alignItems: "center",
-    paddingTop: 12,
+    paddingTop: Platform.OS === "android" ? STATUS_BAR_OFFSET : 12,
     paddingBottom: 12,
     paddingLeft: 10,
     paddingRight: 10,
