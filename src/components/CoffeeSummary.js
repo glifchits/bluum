@@ -26,6 +26,7 @@ export default class CoffeeSummary extends React.Component {
         coffee(id: $coffeeID) {
           id
           name
+          avgRating
           roast_style
           roast_type
           roaster {
@@ -65,7 +66,7 @@ export default class CoffeeSummary extends React.Component {
                 <Text style={styles.coffeeName}>{coffee.name}</Text>
                 <Text style={styles.roaster}>{coffee.roaster.name}</Text>
                 {roastInfo}
-                <Rating rating={coffee.rating} ratingCount={5} />
+                <Rating rating={coffee.avgRating} ratingCount={5} />
               </View>
             </View>
           );
