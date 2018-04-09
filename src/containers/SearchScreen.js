@@ -1,4 +1,6 @@
 import React from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import {
   View,
   TextInput,
@@ -45,10 +47,8 @@ export default class SearchScreen extends React.Component {
 
   _handleSearchChange = inputValue => this.setState({ inputValue });
 
-  handleSelectCoffee(coffee) {
-    this.props.navigation.navigate("CoffeeProfile", {
-      coffee: coffee,
-    });
+  handleSelectCoffee(coffeeID) {
+    this.props.navigation.navigate("CoffeeProfile", { coffeeID });
   }
 
   clearSearch() {
@@ -57,9 +57,14 @@ export default class SearchScreen extends React.Component {
 
   render() {
     const { inputValue } = this.state;
-    const filteredCoffee = coffee.filter(coffee =>
-      filterCoffee(coffee, inputValue),
-    );
+
+    const GET_COFFEES = gql`
+      query CoffeeListIDs {
+        coffee(limit: 10) {
+          id
+        }
+      }
+    `;
 
     return (
       <View style={styles.screenContainer}>
@@ -115,13 +120,25 @@ export default class SearchScreen extends React.Component {
           </TouchableOpacity>
         ) : null}
         <ScrollView style={styles.resultsContainer}>
-          <FlatList
-            data={filteredCoffee}
-            renderItem={({ item }) => (
-              <CoffeeCard coffee={item} onPress={this.handleSelectCoffee} />
-            )}
-            keyExtractor={item => item.id}
-          />
+          <Query query={GET_COFFEES}>
+            {({ loading, error, data }) => {
+              if (loading) return <Text>Loading...</Text>;
+              if (error) return <Text>Error :(</Text>;
+
+              return (
+                <FlatList
+                  data={data.coffee}
+                  renderItem={({ item }) => (
+                    <CoffeeCard
+                      coffeeID={item.id}
+                      onPress={() => this.handleSelectCoffee(item.id)}
+                    />
+                  )}
+                  keyExtractor={item => item.id}
+                />
+              );
+            }}
+          </Query>
         </ScrollView>
       </View>
     );
