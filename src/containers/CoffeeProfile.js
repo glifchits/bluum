@@ -61,6 +61,31 @@ export default class CoffeeProfileScreen extends React.Component {
     });
   }
 
+  renderCoffeeMetadata(coffee) {
+    const Entry = ({ title, value }) =>
+      value ? (
+        <View style={styles.infoItemContainer}>
+          <Text style={styles.infoItemTitle}>{title}</Text>
+          <Text style={styles.infoItemValue}>{value}</Text>
+        </View>
+      ) : null;
+
+    return (
+      <View>
+        <FlatList
+          data={[
+            { title: "Description", value: coffee.description },
+            { title: "Regions", value: [...coffee.regions].sort().join(", ") },
+            { title: "Origin", value: coffee.metadata.origin },
+            { title: "Elevation", value: coffee.metadata.elevation },
+          ]}
+          renderItem={({ item }) => <Entry {...item} />}
+          keyExtractor={item => item.title}
+        />
+      </View>
+    );
+  }
+
   render() {
     // Pulls in coffee from the params passed in from My Coffee screen
     const { params } = this.props.navigation.state;
@@ -128,9 +153,9 @@ export default class CoffeeProfileScreen extends React.Component {
         coffee(id: $id) {
           id
           name
-          roaster {
-            name
-          }
+          description
+          regions
+          metadata
         }
       }
     `;
@@ -175,25 +200,9 @@ export default class CoffeeProfileScreen extends React.Component {
                   selectedTextStyle={styles.selectedTabText}
                   containerBorderRadius={BORDER_RADIUS}
                 />
-                {this.state.selectedTab === 0 ? (
-                  myBrewsBody
-                ) : (
-                  <View>
-                    <FlatList
-                      data={[
-                        { title: "Description", value: coffee.description },
-                        { title: "Origin", value: coffee.origin },
-                      ]}
-                      renderItem={({ item }) => (
-                        <View style={styles.infoItemContainer}>
-                          <Text style={styles.infoItemTitle}>{item.title}</Text>
-                          <Text style={styles.infoItemValue}>{item.value}</Text>
-                        </View>
-                      )}
-                      keyExtractor={item => item.title}
-                    />
-                  </View>
-                )}
+                {this.state.selectedTab === 0
+                  ? myBrewsBody
+                  : this.renderCoffeeMetadata(coffee)}
               </ScrollView>
               <ButtonBar
                 buttonText="Add a Brew"
