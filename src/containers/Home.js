@@ -1,4 +1,6 @@
 import React, { Fragment } from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import {
   StyleSheet,
   Text,
@@ -29,6 +31,41 @@ const { Form } = t.form;
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 
+const RecentlyBrewed = ({ handleSelectCoffee }) => {
+  const RECENT_COFFEES = gql`
+    {
+      coffee(limit: 2) {
+        id
+      }
+    }
+  `;
+  return (
+    <React.Fragment>
+      <Text style={styles.text}>Recently brewed coffee</Text>
+      <Query query={RECENT_COFFEES}>
+        {({ loading, error, data }) => {
+          if (loading) return <Text>Loading...</Text>;
+          if (error || !data.coffee.length) {
+            return <Text>You should brew something!</Text>;
+          }
+          return (
+            <FlatList
+              data={data.coffee}
+              renderItem={({ item }) => (
+                <CoffeeCard
+                  coffeeID={item.id}
+                  onPress={() => handleSelectCoffee(item.id)}
+                />
+              )}
+              keyExtractor={item => item.id}
+            />
+          );
+        }}
+      </Query>
+    </React.Fragment>
+  );
+};
+
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -36,8 +73,6 @@ export default class HomeScreen extends React.Component {
     this.state = {
       inputValue: "",
     };
-
-    this.handleSelectCoffee = this.handleSelectCoffee.bind(this);
   }
 
   static navigationOptions = {
@@ -45,35 +80,14 @@ export default class HomeScreen extends React.Component {
   };
 
   _handleSearchChange = inputValue => this.setState({ inputValue });
+
   _handleSearchClear = () => this.setState({ inputvalue: "" });
 
-  handleSelectCoffee(coffee) {
-    this.props.navigation.navigate("CoffeeProfile", {
-      coffee: coffee,
-    });
-  }
-
-  filterCoffee = coffee => {
-    const { inputValue } = this.state;
-    const matchStr = Object.keys(coffee)
-      .sort()
-      .map(k => _norm(coffee[k].toString()))
-      .join("");
-    const search = _norm(inputValue);
-    return matchStr.indexOf(search) >= 0;
+  handleSelectCoffee = coffeeID => {
+    this.props.navigation.navigate("CoffeeProfile", { coffeeID });
   };
 
-  renderRecentCoffee(item, index) {
-    // Show only the first 3 coffees
-    if (index > 2) {
-      return null;
-    }
-    return <CoffeeCard coffee={item} onPress={this.handleSelectCoffee} />;
-  }
-
   render() {
-    const { inputValue } = this.state;
-
     return (
       <View style={styles.container}>
         <View style={styles.logoContainer}>
@@ -97,14 +111,7 @@ export default class HomeScreen extends React.Component {
               placeholderTextColor={LIGHT_BROWN}
             />
           </View>
-          <Text style={styles.text}>Recently brewed coffee</Text>
-          <FlatList
-            data={coffees}
-            renderItem={({ item, index }) =>
-              this.renderRecentCoffee(item, index)
-            }
-            keyExtractor={item => item.id}
-          />
+          <RecentlyBrewed handleSelectCoffee={this.handleSelectCoffee} />
         </View>
       </View>
     );

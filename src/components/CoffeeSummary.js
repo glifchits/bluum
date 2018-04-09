@@ -10,7 +10,7 @@ export default class CoffeeSummary extends React.Component {
         <View style={styles.dummyImg} />
         <View style={styles.primaryInfo}>
           <Text style={styles.coffeeName}>{coffee.name}</Text>
-          <Text style={styles.roaster}>{coffee.roaster}</Text>
+          <Text style={styles.roaster}>{coffee.roaster.name}</Text>
           <Text style={styles.roastType}>{`${coffee.roast} Roast`}</Text>
           <Rating rating={coffee.rating} ratingCount={5} />
         </View>

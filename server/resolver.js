@@ -5,16 +5,27 @@ const { psql } = require("./psqlAdapter"); // our adapter from psqlAdapter.js
 // one function per endpoint
 exports.resolvers = {
   Query: {
-    async roasters(_, args, ctx) {
-      const query = `select * from roasters;`;
-      return await psql.manyOrNone(query);
+    async roasters(_, { id }) {
+      const query = `select * from roasters ${id ? "where id = $1" : ""};`;
+      return await psql.manyOrNone(query, id);
     },
-    async coffee(_, args, ctx) {
-      const q = `select * from coffees;`;
+    async coffee(_, { id, limit, offset = 0 }) {
+      let where = id ? "where id = $1" : "";
+      let limitClause = limit
+        ? `order by id limit ${limit} offset ${offset}`
+        : "";
+      const q = `select * from coffees ${limitClause} ${where};`;
+      return await psql.manyOrNone(q, id);
+    },
+    async brews(_, { id, limit, offset = 0 }) {
+      let limitClause = limit
+        ? `order by id desc limit ${limit} offset ${offset}`
+        : "";
+      let wheres = [];
+      if (id) wheres.push(`id = ${id}`);
+      let whereClause = wheres.length ? `where ${wheres.join(" and ")}` : "";
+      let q = `select * from brews ${whereClause} ${limitClause};`;
       return await psql.manyOrNone(q);
-    },
-    async brews() {
-      return await psql.manyOrNone(`select * from brews;`);
     },
   },
 
