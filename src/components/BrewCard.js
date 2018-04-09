@@ -26,11 +26,13 @@ export default class BrewCard extends React.Component {
       <TouchableOpacity onPress={onPress}>
         <View style={styles.card}>
           <View style={styles.titleRow}>
-            <Text style={styles.title}>{brew.date.value}</Text>
-            <Rating rating={brew.rating.value} ratingCount={5} />
+            <Text style={styles.title}>
+              {new Date(brew.created_at).toString()}
+            </Text>
+            <Rating rating={brew.rating} ratingCount={5} />
           </View>
           <View style={styles.body}>
-            <Text style={styles.notes}>{brew.notes.value}</Text>
+            <Text style={styles.notes}>{brew.notes || "<no notes>"}</Text>
           </View>
         </View>
       </TouchableOpacity>

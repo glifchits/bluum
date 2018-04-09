@@ -71,7 +71,78 @@ export default class CoffeeProfileScreen extends React.Component {
     const { coffeeID } = params;
     const { sortBy } = this.state;
 
-    const sortedBrews = sortCoffee(sortBy, brews);
+    // TODO sort brews on server side with a GraphQL argument
+    const GET_BREWS_FOR_COFFEE = gql`
+      query BrewsForCoffee($id: ID!) {
+        brews(coffee: $id) {
+          id
+          created_at
+          method
+          notes
+          rating
+        }
+      }
+    `;
+
+    /*
+                  <List>
+                {sortedBrews.map(brew => (
+                  <ListItem
+                    key={brew.id}
+                    title={new Date(brew.created_at).toString()}
+                    subtitle={
+                      <View>
+                        <Text>{brew.notes || "<no notes>"}</Text>
+                        <Rating rating={brew.rating} ratingCount={5} />
+                      </View>
+                    }
+                    onPress={() => this.handleSelectBrew(brew, coffee)}
+                  />
+                ))}
+              </List> */
+
+    const myBrewsBody = (
+      <Query query={GET_BREWS_FOR_COFFEE} variables={{ id: coffeeID }}>
+        {({ loading, error, data }) => {
+          if (loading) return <Text>Loading...</Text>;
+          if (error) return <Text>Error:(</Text>;
+
+          const sortedBrews = [...data.brews].sort((a, b) => {
+            switch (this.state.sortBy) {
+              case "date":
+                return new Date(a.created_at) - new Date(b.created_at);
+              case "rating":
+                return b.rating - a.rating;
+              default:
+                return a.id - b.id;
+            }
+          });
+
+          return (
+            <ScrollView>
+              <Dropdown
+                label="Sort by:"
+                selectedValue={this.state.sortBy}
+                onValueChange={(itemValue, itemIndex) => {
+                  this.setState({ sortBy: itemValue });
+                }}
+                options={SORT_OPTIONS}
+              />
+              <FlatList
+                data={sortedBrews}
+                renderItem={({ item }) => (
+                  <BrewCard
+                    brew={item}
+                    onPress={() => this.handleSelectBrew(brew, coffee)}
+                  />
+                )}
+                keyExtractor={item => item.id}
+              />
+            </ScrollView>
+          );
+        }}
+      </Query>
+    );
 
     const GET_COFFEE = gql`
       query CoffeeDetails($id: ID!) {
@@ -126,26 +197,7 @@ export default class CoffeeProfileScreen extends React.Component {
                   containerBorderRadius={BORDER_RADIUS}
                 />
                 {this.state.selectedTab === 0 ? (
-                  <View>
-                    <Dropdown
-                      label="Sort by:"
-                      selectedValue={this.state.sortBy}
-                      onValueChange={(itemValue, itemIndex) => {
-                        this.setState({ sortBy: itemValue });
-                      }}
-                      options={SORT_OPTIONS}
-                    />
-                    <FlatList
-                      data={sortedBrews}
-                      renderItem={({ item }) => (
-                        <BrewCard
-                          brew={item}
-                          onPress={() => this.handleSelectBrew(item, coffee)}
-                        />
-                      )}
-                      keyExtractor={item => item.date.value}
-                    />
-                  </View>
+                  myBrewsBody
                 ) : (
                   <View>
                     <FlatList
