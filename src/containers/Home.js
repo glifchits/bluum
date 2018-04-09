@@ -45,7 +45,8 @@ const RecentlyBrewed = ({ handleSelectCoffee }) => {
       <Query query={RECENT_COFFEES}>
         {({ loading, error, data }) => {
           if (loading) return <Text>Loading...</Text>;
-          if (error || !data.coffee.length) {
+          if (error) return <Text>Error :(</Text>;
+          if (!data.coffee.length) {
             return <Text>You should brew something!</Text>;
           }
           return (
