@@ -24,6 +24,7 @@ const CoffeeCard = ({ coffeeID, onPress }) => {
       coffee(id: $id) {
         id
         name
+        avgRating
         roaster {
           name
         }
@@ -52,7 +53,7 @@ const CoffeeCard = ({ coffeeID, onPress }) => {
               <View style={styles.infoContainer}>
                 <Text style={styles.name}>{coffee.name}</Text>
                 <Text style={styles.roaster}>{coffee.roaster.name}</Text>
-                <Rating rating={coffee.rating} ratingCount={5} />
+                <Rating rating={Math.round(coffee.avgRating)} ratingCount={5} />
               </View>
             </View>
           </TouchableOpacity>

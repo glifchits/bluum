@@ -38,6 +38,18 @@ exports.resolvers = {
       `;
       return await psql.one(q, coffee.roaster_id);
     },
+    avgRating: async coffee => {
+      const q = `
+        select coffees.id, avg(brews.rating) as avgRating
+        from coffees
+        inner join brews
+          on brews.coffee_id = coffees.id
+        where coffees.id = $1
+        group by coffees.id;
+      `;
+      const { avgrating } = await psql.one(q, coffee.id);
+      return avgrating;
+    },
   },
 
   Roaster: {
