@@ -68,36 +68,65 @@ export default class CoffeeProfileScreen extends React.Component {
     const { coffeeID } = params;
     const { sortBy } = this.state;
 
-    const sortedBrews = sortCoffee(sortBy, brews);
-
-    const myBrews = sortedBrews.map((brew, index) => {
-      return (
-        <ListItem
-          key={index}
-          title={brew.date.value}
-          subtitle={
-            <View>
-              <Text>{brew.notes.value}</Text>
-              <Rating rating={brew.rating.value} ratingCount={5} />
-            </View>
-          }
-          onPress={() => this.handleSelectBrew(brew, coffee)}
-        />
-      );
-    });
+    // TODO sort brews on server side with a GraphQL argument
+    const GET_BREWS_FOR_COFFEE = gql`
+      query BrewsForCoffee($id: ID!) {
+        brews(coffee: $id) {
+          id
+          created_at
+          method
+          notes
+          rating
+        }
+      }
+    `;
 
     const myBrewsBody = (
-      <View>
-        <Dropdown
-          label="Sort by:"
-          selectedValue={this.state.sortBy}
-          onValueChange={(itemValue, itemIndex) => {
-            this.setState({ sortBy: itemValue });
-          }}
-          options={SORT_OPTIONS}
-        />
-        <List>{myBrews}</List>
-      </View>
+      <Query query={GET_BREWS_FOR_COFFEE} variables={{ id: coffeeID }}>
+        {({ loading, error, data }) => {
+          if (loading) return <Text>Loading...</Text>;
+          if (error) return <Text>Error:(</Text>;
+
+          const sortedBrews = [...data.brews].sort((a, b) => {
+            switch (this.state.sortBy) {
+              case "date":
+                return new Date(a.created_at) - new Date(b.created_at);
+              case "rating":
+                return b.rating - a.rating;
+              default:
+                return a.id - b.id;
+            }
+          });
+
+          return (
+            <View>
+              <Dropdown
+                label="Sort by:"
+                selectedValue={this.state.sortBy}
+                onValueChange={(itemValue, itemIndex) => {
+                  this.setState({ sortBy: itemValue });
+                }}
+                options={SORT_OPTIONS}
+              />
+              <List>
+                {sortedBrews.map(brew => (
+                  <ListItem
+                    key={brew.id}
+                    title={new Date(brew.created_at).toString()}
+                    subtitle={
+                      <View>
+                        <Text>{brew.notes || "<no notes>"}</Text>
+                        <Rating rating={brew.rating} ratingCount={5} />
+                      </View>
+                    }
+                    onPress={() => this.handleSelectBrew(brew, coffee)}
+                  />
+                ))}
+              </List>
+            </View>
+          );
+        }}
+      </Query>
     );
 
     const GET_COFFEE = gql`
