@@ -205,7 +205,7 @@ export default class CoffeeProfileScreen extends React.Component {
                   : this.renderCoffeeMetadata(coffee)}
               </ScrollView>
               <ButtonBar
-                buttonText="Add a Brew"
+                buttonText="Brew These Beans"
                 onPress={() => this.handleAddBrew(coffee.id)}
               />
             </View>
