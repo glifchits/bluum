@@ -61,7 +61,19 @@ export default class CoffeeProfileScreen extends React.Component {
     });
   }
 
-  renderCoffeeMetadata(coffee) {
+  renderCoffeeMetadata(coffeeID) {
+    const GET_COFFEE = gql`
+      query CoffeeDetails($id: ID!) {
+        coffee(id: $id) {
+          id
+          name
+          description
+          regions
+          metadata
+        }
+      }
+    `;
+
     const Entry = ({ title, value }) =>
       value ? (
         <View style={styles.infoItemContainer}>
@@ -72,16 +84,26 @@ export default class CoffeeProfileScreen extends React.Component {
 
     return (
       <View>
-        <FlatList
-          data={[
-            { title: "Description", value: coffee.description },
-            { title: "Regions", value: [...coffee.regions].sort().join(", ") },
-            { title: "Origin", value: coffee.metadata.origin },
-            { title: "Elevation", value: coffee.metadata.elevation },
-          ]}
-          renderItem={({ item }) => <Entry {...item} />}
-          keyExtractor={item => item.title}
-        />
+        <Query query={GET_COFFEE} variables={{ id: coffeeID }}>
+          {({ loading, error, data }) => {
+            if (loading) return <Text>Loading...</Text>;
+            if (error) return <Text>Error:(</Text>;
+            const coffee = data.coffee[0];
+            const regions = [...coffee.regions].sort().join(", ");
+            return (
+              <FlatList
+                data={[
+                  { title: "Description", value: coffee.description },
+                  { title: "Regions", value: regions },
+                  { title: "Origin", value: coffee.metadata.origin },
+                  { title: "Elevation", value: coffee.metadata.elevation },
+                ]}
+                renderItem={({ item }) => <Entry {...item} />}
+                keyExtractor={item => item.title}
+              />
+            );
+          }}
+        </Query>
       </View>
     );
   }
@@ -109,7 +131,7 @@ export default class CoffeeProfileScreen extends React.Component {
       <Query query={GET_BREWS_FOR_COFFEE} variables={{ id: coffeeID }}>
         {({ loading, error, data }) => {
           if (loading) return <Text>Loading...</Text>;
-          if (error) return <Text>Error:(</Text>;
+          if (error) return <Text>Error :(</Text>;
 
           const sortedBrews = [...data.brews].sort((a, b) => {
             switch (this.state.sortBy) {
@@ -148,70 +170,47 @@ export default class CoffeeProfileScreen extends React.Component {
       </Query>
     );
 
-    const GET_COFFEE = gql`
-      query CoffeeDetails($id: ID!) {
-        coffee(id: $id) {
-          id
-          name
-          description
-          regions
-          metadata
-        }
-      }
-    `;
-
     return (
-      <Query query={GET_COFFEE} variables={{ id: coffeeID }}>
-        {({ loading, error, data }) => {
-          if (loading) return <Text>Loading...</Text>;
-          if (error) return <Text>Error:(</Text>;
-          const coffee = data.coffee[0];
+      <View style={styles.container}>
+        <Header
+          leftComponent={
+            <Icon
+              type="material"
+              name="chevron-left"
+              color="#fff"
+              onPress={() => this.props.navigation.goBack()}
+            />
+          }
+          centerComponent={<Text style={styles.headerName}>My Coffee</Text>}
+        />
 
-          return (
-            <View style={styles.container}>
-              <Header
-                leftComponent={
-                  <Icon
-                    type="material"
-                    name="chevron-left"
-                    color="#fff"
-                    onPress={() => this.props.navigation.goBack()}
-                  />
-                }
-                centerComponent={
-                  <Text style={styles.headerName}>My Coffee</Text>
-                }
-              />
-              <ScrollView style={styles.body}>
-                <CoffeeSummary coffeeID={coffee.id} />
-                <ButtonGroup
-                  onPress={this.changeTab}
-                  selectedIndex={this.state.selectedTab}
-                  buttons={TABS}
-                  containerStyle={{
-                    height: 50,
-                    marginTop: 20,
-                    marginLeft: 0,
-                    marginRight: 0,
-                  }}
-                  buttonStyle={styles.tab}
-                  textStyle={styles.tabText}
-                  selectedButtonStyle={styles.selectedTab}
-                  selectedTextStyle={styles.selectedTabText}
-                  containerBorderRadius={BORDER_RADIUS}
-                />
-                {this.state.selectedTab === 0
-                  ? myBrewsBody
-                  : this.renderCoffeeMetadata(coffee)}
-              </ScrollView>
-              <ButtonBar
-                buttonText="Brew These Beans"
-                onPress={() => this.handleAddBrew(coffee.id)}
-              />
-            </View>
-          );
-        }}
-      </Query>
+        <ScrollView style={styles.body}>
+          <CoffeeSummary coffeeID={coffeeID} />
+          <ButtonGroup
+            onPress={this.changeTab}
+            selectedIndex={this.state.selectedTab}
+            buttons={TABS}
+            containerStyle={{
+              height: 50,
+              marginTop: 20,
+              marginLeft: 0,
+              marginRight: 0,
+            }}
+            buttonStyle={styles.tab}
+            textStyle={styles.tabText}
+            selectedButtonStyle={styles.selectedTab}
+            selectedTextStyle={styles.selectedTabText}
+            containerBorderRadius={BORDER_RADIUS}
+          />
+          {this.state.selectedTab === 0
+            ? myBrewsBody
+            : this.renderCoffeeMetadata(coffeeID)}
+        </ScrollView>
+        <ButtonBar
+          buttonText="Brew These Beans"
+          onPress={() => this.handleAddBrew(coffee.id)}
+        />
+      </View>
     );
   }
 }
