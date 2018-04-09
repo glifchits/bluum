@@ -35,8 +35,6 @@ export default class CoffeeProfileScreen extends React.Component {
       selectedTab: 0,
       sortBy: "date",
     };
-
-    this.changeTab = this.changeTab.bind(this);
   }
 
   // Hides default header from StackNavigator and default tabs from TabNavigator
@@ -45,9 +43,9 @@ export default class CoffeeProfileScreen extends React.Component {
     tabBarVisible: false,
   };
 
-  changeTab(tab) {
+  changeTab = tab => {
     this.setState({ selectedTab: tab });
-  }
+  };
 
   handleSelectBrew(brewID) {
     this.props.navigation.navigate("Brew", {
