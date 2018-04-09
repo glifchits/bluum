@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
-
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import {
   BORDER_COLOR_GREY,
@@ -20,21 +21,43 @@ export default class BrewCard extends React.Component {
   }
 
   render() {
-    const { brew, onPress } = this.props;
+    const { brewID, onPress } = this.props;
+
+    const GET_BREW = gql`
+      query Brew($id: ID!) {
+        brews(id: $id) {
+          id
+          method
+          metadata
+          created_at
+          notes
+          flavours
+        }
+      }
+    `;
 
     return (
       <TouchableOpacity onPress={onPress}>
-        <View style={styles.card}>
-          <View style={styles.titleRow}>
-            <Text style={styles.title}>
-              {new Date(brew.created_at).toString()}
-            </Text>
-            <Rating rating={brew.rating} ratingCount={5} />
-          </View>
-          <View style={styles.body}>
-            <Text style={styles.notes}>{brew.notes || "<no notes>"}</Text>
-          </View>
-        </View>
+        <Query query={GET_BREW} variables={{ id: brewID }}>
+          {({ loading, error, data }) => {
+            if (loading) return <Text>Loading...</Text>;
+            if (error) return <Text>Error :(</Text>;
+            const brew = data.brews[0];
+            return (
+              <View style={styles.card}>
+                <View style={styles.titleRow}>
+                  <Text style={styles.title}>
+                    {new Date(brew.created_at).toDateString()}
+                  </Text>
+                  <Rating rating={brew.rating} ratingCount={5} />
+                </View>
+                <View style={styles.body}>
+                  <Text style={styles.notes}>{brew.notes || "<no notes>"}</Text>
+                </View>
+              </View>
+            );
+          }}
+        </Query>
       </TouchableOpacity>
     );
   }

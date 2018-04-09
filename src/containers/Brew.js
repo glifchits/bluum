@@ -1,4 +1,6 @@
-import React from "react";
+import React, { Fragment } from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import { StyleSheet, Text, View, ScrollView, TextInput } from "react-native";
 import {
   Header,
@@ -43,18 +45,35 @@ export default class BrewScreen extends React.Component {
   };
 
   renderItems(brew) {
+    const EntryOrNull = ({ title, value }) =>
+      value ? (
+        <ListItem key={title} title={title} subtitle={value} hideChevron />
+      ) : null;
+
     return (
       <List style={styles.brewInfo}>
-        {Object.keys(brew).map((key, index) => {
-          return (
-            <ListItem
-              key={index}
-              title={brew[key].label}
-              subtitle={brew[key].value}
-              hideChevron
-            />
-          );
-        })}
+        <EntryOrNull
+          title="Brew Date"
+          value={new Date(brew.created_at).toDateString()}
+        />
+        <EntryOrNull title="Notes" value={brew.notes} />
+        <EntryOrNull title="Method" value={brew.method} />
+        <EntryOrNull
+          title="Grind Coarseness"
+          value={(brew.metadata || {})["Grind Coarseness"]}
+        />
+        <EntryOrNull
+          title="Coffee Weight (g)"
+          value={(brew.metadata || {})["Coffee Weight (g)"]}
+        />
+        <EntryOrNull
+          title="Water Weight (g)"
+          value={(brew.metadata || {})["Water Weight (g)"]}
+        />
+        <EntryOrNull
+          title="Flavours"
+          value={[...(brew.flavours || [])].sort().join(", ")}
+        />
       </List>
     );
   }
@@ -138,8 +157,48 @@ export default class BrewScreen extends React.Component {
   render() {
     // Pulls in coffee from the params passed in from My Coffee screen
     const { params } = this.props.navigation.state;
-    const { brew, editable, coffee } = params;
+    const { brewID, coffeeID } = params;
+
+    const editable = brewID !== null;
     const headerTitle = editable ? "New Brew" : "About This Brew";
+
+    const GET_BREW = gql`
+      query Brew($id: ID!) {
+        brews(id: $id) {
+          id
+          method
+          metadata
+          created_at
+          notes
+          flavours
+          coffee {
+            id
+          }
+        }
+      }
+    `;
+
+    const coffeeDetails = !coffeeID ? (
+      <Query query={GET_BREW} variables={{ id: brewID }}>
+        {({ loading, error, data }) => {
+          if (loading) return <Text>Loading...</Text>;
+          if (error) return <Text>Error :(</Text>;
+          const brew = data.brews[0];
+
+          return (
+            <Fragment>
+              <CoffeeSummary coffeeID={brew.coffee.id} />
+              {this.renderItems(brew)}
+            </Fragment>
+          );
+        }}
+      </Query>
+    ) : (
+      <Fragment>
+        <CoffeeSummary coffeeID={coffeeID} />
+        {this.renderForm()}
+      </Fragment>
+    );
 
     return (
       <View style={styles.container}>
@@ -151,14 +210,14 @@ export default class BrewScreen extends React.Component {
               onPress={() => this.props.navigation.goBack()}
             />
           }
-          centerComponent={{ text: headerTitle, style: { color: "#fff" } }}
+          centerComponent={{
+            text: headerTitle,
+            style: { color: "#fff" },
+          }}
           outerContainerStyles={{ backgroundColor: "#8b8c8c" }}
           innerContainerStyles={{ justifyContent: "space-between" }}
         />
-        <ScrollView style={styles.body}>
-          <CoffeeSummary coffee={coffee} />
-          {editable ? this.renderForm() : this.renderItems(brew)}
-        </ScrollView>
+        <ScrollView style={styles.body}>{coffeeDetails}</ScrollView>
         {editable ? (
           <View style={styles.buttonBar}>
             <Button

@@ -49,19 +49,17 @@ export default class CoffeeProfileScreen extends React.Component {
     this.setState({ selectedTab: tab });
   }
 
-  handleSelectBrew(brew, coffee) {
+  handleSelectBrew(brewID) {
     this.props.navigation.navigate("Brew", {
-      brew: brew,
-      coffee: coffee,
-      editable: false,
+      brewID,
+      coffeeID: null,
     });
   }
 
-  handleAddBrew(coffee) {
+  handleAddBrew(coffeeID) {
     this.props.navigation.navigate("Brew", {
-      brew: null,
-      coffee: coffee,
-      editable: true,
+      brewID: null,
+      coffeeID,
     });
   }
 
@@ -132,8 +130,8 @@ export default class CoffeeProfileScreen extends React.Component {
                 data={sortedBrews}
                 renderItem={({ item }) => (
                   <BrewCard
-                    brew={item}
-                    onPress={() => this.handleSelectBrew(brew, coffee)}
+                    brewID={item.id}
+                    onPress={() => this.handleSelectBrew(item.id)}
                   />
                 )}
                 keyExtractor={item => item.id}
@@ -179,7 +177,7 @@ export default class CoffeeProfileScreen extends React.Component {
                 }
               />
               <ScrollView style={styles.body}>
-                <CoffeeSummary coffee={coffee} />
+                <CoffeeSummary coffeeID={coffee.id} />
                 <ButtonGroup
                   onPress={this.changeTab}
                   selectedIndex={this.state.selectedTab}
@@ -218,7 +216,7 @@ export default class CoffeeProfileScreen extends React.Component {
               </ScrollView>
               <ButtonBar
                 buttonText="Add a Brew"
-                onPress={() => this.handleAddBrew(coffee)}
+                onPress={() => this.handleAddBrew(coffee.id)}
               />
             </View>
           );

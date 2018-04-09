@@ -1,4 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import { View, Text, ScrollView, StyleSheet, Image } from "react-native";
 import Rating from "../components/Rating.js";
 import {
@@ -12,26 +15,52 @@ import {
 const CUP_SIZE = 125;
 
 export default class CoffeeSummary extends React.Component {
+  static propTypes = {
+    coffeeID: PropTypes.string.isRequired,
+  };
+
   render() {
-    const { coffee } = this.props;
+    const { coffeeID } = this.props;
+    const COFFEE_QUERY = gql`
+      query Coffee($coffeeID: ID!) {
+        coffee(id: $coffeeID) {
+          id
+          name
+          roast_type
+          roaster {
+            name
+          }
+        }
+      }
+    `;
+
     return (
-      <View style={styles.topInfo}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={require("../assets/images/Cool-Cup.png")}
-            style={styles.cupImage}
-          />
-          <Text style={styles.cupLetter}>
-            {coffee.name.charAt(0).toUpperCase()}
-          </Text>
-        </View>
-        <View style={styles.primaryInfo}>
-          <Text style={styles.coffeeName}>{coffee.name}</Text>
-          <Text style={styles.roaster}>{coffee.roaster.name}</Text>
-          <Text style={styles.roastType}>{`${coffee.roast} Roast`}</Text>
-          <Rating rating={coffee.rating} ratingCount={5} />
-        </View>
-      </View>
+      <Query query={COFFEE_QUERY} variables={{ coffeeID }}>
+        {({ loading, error, data }) => {
+          if (loading) return <Text>Loading...</Text>;
+          if (error) return <Text>Error :(</Text>;
+          const coffee = data.coffee[0];
+          return (
+            <View style={styles.topInfo}>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={require("../assets/images/Cool-Cup.png")}
+                  style={styles.cupImage}
+                />
+                <Text style={styles.cupLetter}>
+                  {coffee.name.charAt(0).toUpperCase()}
+                </Text>
+              </View>
+              <View style={styles.primaryInfo}>
+                <Text style={styles.coffeeName}>{coffee.name}</Text>
+                <Text style={styles.roaster}>{coffee.roaster.name}</Text>
+                <Text style={styles.roastType}>{coffee.roast_type} Roast</Text>
+                <Rating rating={coffee.rating} ratingCount={5} />
+              </View>
+            </View>
+          );
+        }}
+      </Query>
     );
   }
 }
