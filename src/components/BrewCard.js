@@ -28,6 +28,7 @@ export default class BrewCard extends React.Component {
         brews(id: $id) {
           id
           method
+          rating
           metadata
           created_at
           notes
