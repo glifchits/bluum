@@ -23,6 +23,7 @@ const typeDefs = `
     created_at: Date!
     updated_at: Date!
     name: String!
+    description: String
     roast_type: String
     roast_style: String
     roaster: Roaster!
