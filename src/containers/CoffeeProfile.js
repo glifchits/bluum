@@ -82,23 +82,6 @@ export default class CoffeeProfileScreen extends React.Component {
       }
     `;
 
-    /*
-                  <List>
-                {sortedBrews.map(brew => (
-                  <ListItem
-                    key={brew.id}
-                    title={new Date(brew.created_at).toString()}
-                    subtitle={
-                      <View>
-                        <Text>{brew.notes || "<no notes>"}</Text>
-                        <Rating rating={brew.rating} ratingCount={5} />
-                      </View>
-                    }
-                    onPress={() => this.handleSelectBrew(brew, coffee)}
-                  />
-                ))}
-              </List> */
-
     const myBrewsBody = (
       <Query query={GET_BREWS_FOR_COFFEE} variables={{ id: coffeeID }}>
         {({ loading, error, data }) => {
