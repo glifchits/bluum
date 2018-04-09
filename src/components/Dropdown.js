@@ -92,8 +92,6 @@ export default class Dropdown extends React.Component {
             {this.renderOptions(options)}
           </PickerIOS>
           <Button
-            backgroundColor="#8b8c8c"
-            color="#fff"
             borderRadius={3}
             title="Done"
             onPress={this.togglePicker}
