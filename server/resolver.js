@@ -17,12 +17,13 @@ exports.resolvers = {
       const q = `select * from coffees ${limitClause} ${where};`;
       return await psql.manyOrNone(q, id);
     },
-    async brews(_, { id, limit, offset = 0 }) {
+    async brews(_, { id, coffee, limit, offset = 0 }) {
       let limitClause = limit
         ? `order by id desc limit ${limit} offset ${offset}`
         : "";
       let wheres = [];
       if (id) wheres.push(`id = ${id}`);
+      if (coffee) wheres.push(`coffee_id = ${coffee}`);
       let whereClause = wheres.length ? `where ${wheres.join(" and ")}` : "";
       let q = `select * from brews ${whereClause} ${limitClause};`;
       return await psql.manyOrNone(q);

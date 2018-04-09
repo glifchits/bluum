@@ -47,7 +47,7 @@ const typeDefs = `
   type Query {
     roasters(id: ID): [Roaster]!,
     coffee(id: ID, limit: Int, offset: Int): [Coffee]!
-    brews(id: ID, limit: Int, offset: Int): [Brew]!
+    brews(id: ID, limit: Int, offset: Int, coffee: ID): [Brew]!
   }
 `;
 
