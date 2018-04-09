@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
@@ -26,6 +26,7 @@ export default class CoffeeSummary extends React.Component {
         coffee(id: $coffeeID) {
           id
           name
+          roast_style
           roast_type
           roaster {
             name
@@ -40,6 +41,15 @@ export default class CoffeeSummary extends React.Component {
           if (loading) return <Text>Loading...</Text>;
           if (error) return <Text>Error :(</Text>;
           const coffee = data.coffee[0];
+
+          const roastDescription = [];
+          const { roast_type, roast_style } = coffee;
+          if (roast_type) roastDescription.push(roast_type);
+          if (roast_style) roastDescription.push(`${roast_style} Roast`);
+          const roastInfo = roastDescription ? (
+            <Text style={styles.roastType}>{roastDescription.join(", ")}</Text>
+          ) : null;
+
           return (
             <View style={styles.topInfo}>
               <View style={styles.imageContainer}>
@@ -54,7 +64,7 @@ export default class CoffeeSummary extends React.Component {
               <View style={styles.primaryInfo}>
                 <Text style={styles.coffeeName}>{coffee.name}</Text>
                 <Text style={styles.roaster}>{coffee.roaster.name}</Text>
-                <Text style={styles.roastType}>{coffee.roast_type} Roast</Text>
+                {roastInfo}
                 <Rating rating={coffee.rating} ratingCount={5} />
               </View>
             </View>
