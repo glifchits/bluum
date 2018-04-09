@@ -1,18 +1,19 @@
 import React from "react";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import {
-  Header,
   Icon,
   ButtonGroup,
   List,
   ListItem,
   Button,
 } from "react-native-elements";
-import Rating from "../components/Rating.js";
+import Rating from "../components/Rating";
 import Dropdown from "../components/Dropdown";
+import Header from "../components/Header";
 import CoffeeSummary from "../components/CoffeeSummary";
 import brews from "../testdata/brews.js";
 import { sortCoffee } from "../utils/utils";
+import { FONT_REG } from "../styles/common";
 
 const SORT_OPTIONS = [
   { label: "Date", value: "date" },
@@ -131,14 +132,13 @@ export default class CoffeeProfileScreen extends React.Component {
         <Header
           leftComponent={
             <Icon
-              name="arrow-back"
+              type="material"
+              name="chevron-left"
               color="#fff"
               onPress={() => this.props.navigation.goBack()}
             />
           }
-          centerComponent={{ text: coffee.name, style: { color: "#fff" } }}
-          outerContainerStyles={{ backgroundColor: "#8b8c8c" }}
-          innerContainerStyles={{ justifyContent: "space-between" }}
+          centerComponent={<Text style={styles.headerName}>My Coffee</Text>}
         />
         <ScrollView style={styles.body}>
           <CoffeeSummary coffee={coffee} />
@@ -182,5 +182,10 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     borderTopWidth: 1,
     borderColor: "#d9d9d9",
+  },
+  headerName: {
+    fontSize: 18,
+    fontFamily: FONT_REG,
+    color: "#fff",
   },
 });

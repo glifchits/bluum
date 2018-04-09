@@ -23,8 +23,8 @@ import {
 import coffee from "../testdata/my_coffees";
 import { filterCoffee } from "../utils/utils";
 import CoffeeCard from "../components/CoffeeCard";
+import Header from "../components/Header";
 
-const STATUS_BAR_OFFSET = 35;
 const GUTTER = 10;
 const WIDTH = Dimensions.get("window").width;
 
@@ -62,36 +62,38 @@ export default class SearchScreen extends React.Component {
     );
 
     return (
-      <View style={styles.screenContainer} forceInset={{ top: "always" }}>
-        <View style={styles.searchBarContainer}>
-          <View style={styles.searchBox}>
-            <Icon
-              style={styles.icon}
-              type="material"
-              name="chevron-left"
-              color={LIGHT_BROWN}
-              onPress={() => this.props.navigation.goBack()}
-            />
-            <TextInput
-              autoFocus
-              key="searchTextInput"
-              autoCorrect={false}
-              spellCheck={false}
-              value={inputValue}
-              placeholder="Search coffee"
-              onChangeText={this._handleSearchChange}
-              style={styles.searchInput}
-              underlineColorAndroid="transparent"
-            />
-            <Icon
-              style={styles.icon}
-              type="material"
-              name="close"
-              color={LIGHT_BROWN}
-              onPress={this.clearSearch}
-            />
-          </View>
-        </View>
+      <View style={styles.screenContainer}>
+        <Header
+          centerComponent={
+            <View style={styles.searchBox}>
+              <Icon
+                style={styles.icon}
+                type="material"
+                name="chevron-left"
+                color={LIGHT_BROWN}
+                onPress={() => this.props.navigation.goBack()}
+              />
+              <TextInput
+                autoFocus
+                key="searchTextInput"
+                autoCorrect={false}
+                spellCheck={false}
+                value={inputValue}
+                placeholder="Search coffee"
+                onChangeText={this._handleSearchChange}
+                style={styles.searchInput}
+                underlineColorAndroid="transparent"
+              />
+              <Icon
+                style={styles.icon}
+                type="material"
+                name="close"
+                color={LIGHT_BROWN}
+                onPress={this.clearSearch}
+              />
+            </View>
+          }
+        />
         {inputValue.length > 0 ? (
           <TouchableOpacity
             style={styles.addCoffeeContainer}
@@ -130,11 +132,6 @@ const styles = StyleSheet.create({
   screenContainer: {
     backgroundColor: "#fff",
     flex: 1,
-  },
-  searchBarContainer: {
-    backgroundColor: LIGHT_BROWN,
-    padding: GUTTER,
-    paddingTop: Platform.OS === "android" ? STATUS_BAR_OFFSET : GUTTER,
   },
   searchBox: {
     backgroundColor: "#fff",

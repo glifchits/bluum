@@ -9,7 +9,7 @@ import {
   ScrollView,
   Platform,
 } from "react-native";
-import { Header, List, ListItem, Icon } from "react-native-elements";
+import { Icon } from "react-native-elements";
 import Rating from "../components/Rating";
 import Dropdown from "../components/Dropdown";
 import { sortCoffee, filterCoffee } from "../utils/utils";
@@ -22,6 +22,7 @@ import {
   OFF_BLACK,
 } from "../styles/common";
 import CoffeeCard from "../components/CoffeeCard";
+import Header from "../components/Header";
 
 const SORT_OPTIONS = [
   { label: "Name", value: "name" },
@@ -98,51 +99,50 @@ export default class MyCoffeeScreen extends React.Component {
 
     return (
       <View style={styles.container}>
-        {!searching ? (
-          <View style={styles.headerContainer}>
-            <View style={styles.headerLeft} />
-            <View style={styles.headerCenter}>
+        <Header
+          centerComponent={
+            !searching ? (
               <Text style={styles.headerName}>My Coffee</Text>
-            </View>
-            <View style={styles.headerRight}>
+            ) : (
+              <View style={styles.searchBox}>
+                <Icon
+                  style={styles.icon}
+                  type="material"
+                  name="chevron-left"
+                  color={LIGHT_BROWN}
+                  onPress={this.handleSearchToggle}
+                />
+                <TextInput
+                  autoFocus
+                  key="searchTextInput"
+                  autoCorrect={false}
+                  spellCheck={false}
+                  value={searchTerm}
+                  placeholder="Search coffee"
+                  onChangeText={this.handleSearchChange}
+                  style={styles.searchInput}
+                  underlineColorAndroid="transparent"
+                />
+                <Icon
+                  style={styles.icon}
+                  type="material"
+                  name="close"
+                  color={LIGHT_BROWN}
+                  onPress={this.clearSearch}
+                />
+              </View>
+            )
+          }
+          rightComponent={
+            !searching ? (
               <Icon
                 name="search"
                 color="#fff"
                 onPress={this.handleSearchToggle}
               />
-            </View>
-          </View>
-        ) : (
-          <View style={styles.headerContainer}>
-            <View style={styles.searchBox}>
-              <Icon
-                style={styles.icon}
-                type="material"
-                name="chevron-left"
-                color={LIGHT_BROWN}
-                onPress={this.handleSearchToggle}
-              />
-              <TextInput
-                autoFocus
-                key="searchTextInput"
-                autoCorrect={false}
-                spellCheck={false}
-                value={searchTerm}
-                placeholder="Search coffee"
-                onChangeText={this.handleSearchChange}
-                style={styles.searchInput}
-                underlineColorAndroid="transparent"
-              />
-              <Icon
-                style={styles.icon}
-                type="material"
-                name="close"
-                color={LIGHT_BROWN}
-                onPress={this.clearSearch}
-              />
-            </View>
-          </View>
-        )}
+            ) : null
+          }
+        />
         <Dropdown
           label="Sort by:"
           selectedValue={this.state.sortBy}
@@ -193,23 +193,6 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     paddingLeft: 10,
     paddingRight: 10,
-  },
-  headerLeft: {
-    flexGrow: 0,
-    width: 30,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerCenter: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerRight: {
-    flexGrow: 0,
-    width: 30,
-    alignItems: "center",
-    justifyContent: "center",
   },
   headerName: {
     fontSize: 18,
