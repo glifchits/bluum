@@ -9,6 +9,7 @@ import Header from "../components/Header";
 import CoffeeSummary from "../components/CoffeeSummary";
 import brews from "../testdata/brews.js";
 import { sortCoffee } from "../utils/utils";
+import { GET_BREWS_FOR_COFFEE } from "../queries";
 import {
   FONT_REG,
   FONT_BOLD,
@@ -113,19 +114,6 @@ export default class CoffeeProfileScreen extends React.Component {
     const { params } = this.props.navigation.state;
     const { coffeeID } = params;
     const { sortBy } = this.state;
-
-    // TODO sort brews on server side with a GraphQL argument
-    const GET_BREWS_FOR_COFFEE = gql`
-      query BrewsForCoffee($id: ID!) {
-        brews(coffee: $id) {
-          id
-          created_at
-          method
-          notes
-          rating
-        }
-      }
-    `;
 
     const myBrewsBody = (
       <Query query={GET_BREWS_FOR_COFFEE} variables={{ id: coffeeID }}>

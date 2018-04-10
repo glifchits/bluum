@@ -14,6 +14,7 @@ import {
 import Rating from "../components/Rating";
 import Dropdown from "../components/Dropdown";
 import CoffeeSummary from "../components/CoffeeSummary";
+import { GET_BREWS_FOR_COFFEE, BREW_FRAGMENT } from "../queries";
 
 const BREW_METHODS = [
   { label: "Drip", value: "Drip" },
@@ -217,9 +218,10 @@ export default class BrewScreen extends React.Component {
           flavours: $flavours
           metadata: $metadata
         ) {
-          id
+          ...Brew
         }
       }
+      ${BREW_FRAGMENT}
     `;
 
     return (
@@ -244,6 +246,17 @@ export default class BrewScreen extends React.Component {
           <View style={styles.buttonBar}>
             <Mutation
               mutation={ADD_BREW}
+              update={(cache, { data }) => {
+                const { brews } = cache.readQuery({
+                  query: GET_BREWS_FOR_COFFEE,
+                  variables: { id: coffeeID },
+                });
+                cache.writeQuery({
+                  query: GET_BREWS_FOR_COFFEE,
+                  variables: { id: coffeeID },
+                  data: { brews: [...brews, data.createBrew] },
+                });
+              }}
               onCompleted={data => {
                 // see handleSelectBrew
                 this.props.navigation.navigate("Brew", {
@@ -252,7 +265,7 @@ export default class BrewScreen extends React.Component {
                 });
               }}
             >
-              {addBrew => {
+              {(addBrew, { loading, error }) => {
                 const { rating, method, notes, ...metadata } = this.state;
                 return (
                   <Button
@@ -261,6 +274,8 @@ export default class BrewScreen extends React.Component {
                     color="#fff"
                     borderRadius={3}
                     title="Save"
+                    loading={!!loading}
+                    disabled={!!loading}
                     onPress={e => {
                       addBrew({
                         variables: {
