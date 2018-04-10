@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Query } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import { StyleSheet, Text, View, ScrollView, TextInput } from "react-native";
 import {
@@ -200,6 +200,28 @@ export default class BrewScreen extends React.Component {
       </Fragment>
     );
 
+    const ADD_BREW = gql`
+      mutation CreateBrew(
+        $coffeeID: ID!
+        $rating: Float
+        $method: String
+        $notes: String
+        $flavours: [String]
+        $metadata: JSON
+      ) {
+        createBrew(
+          coffeeID: $coffeeID
+          rating: $rating
+          method: $method
+          notes: $notes
+          flavours: $flavours
+          metadata: $metadata
+        ) {
+          id
+        }
+      }
+    `;
+
     return (
       <View style={styles.container}>
         <Header
@@ -220,14 +242,41 @@ export default class BrewScreen extends React.Component {
         <ScrollView style={styles.body}>{coffeeDetails}</ScrollView>
         {editable ? (
           <View style={styles.buttonBar}>
-            <Button
-              fontWeight="700"
-              backgroundColor="#8b8c8c"
-              color="#fff"
-              borderRadius={3}
-              title="Save"
-              onPress={() => this.save()}
-            />
+            <Mutation
+              mutation={ADD_BREW}
+              onCompleted={data => {
+                // see handleSelectBrew
+                this.props.navigation.navigate("Brew", {
+                  brewID: data.createBrew.id,
+                  coffeeID: null,
+                });
+              }}
+            >
+              {addBrew => {
+                const { rating, method, notes, ...metadata } = this.state;
+                return (
+                  <Button
+                    fontWeight="700"
+                    backgroundColor="#8b8c8c"
+                    color="#fff"
+                    borderRadius={3}
+                    title="Save"
+                    onPress={e => {
+                      addBrew({
+                        variables: {
+                          coffeeID,
+                          rating,
+                          method,
+                          notes,
+                          // flavours
+                          metadata,
+                        },
+                      });
+                    }}
+                  />
+                );
+              }}
+            </Mutation>
           </View>
         ) : null}
       </View>
