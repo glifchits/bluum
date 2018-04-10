@@ -39,26 +39,33 @@ export default class BrewCard extends React.Component {
 
     return (
       <TouchableOpacity onPress={onPress}>
-        <Query query={GET_BREW} variables={{ id: brewID }}>
-          {({ loading, error, data }) => {
-            if (loading) return <Text>Loading...</Text>;
-            if (error) return <Text>Error :(</Text>;
-            const brew = data.brews[0];
-            return (
-              <View style={styles.card}>
-                <View style={styles.titleRow}>
-                  <Text style={styles.title}>
-                    {new Date(brew.created_at).toDateString()}
-                  </Text>
-                  <Rating rating={brew.rating} ratingCount={5} />
-                </View>
-                <View style={styles.body}>
-                  <Text style={styles.notes}>{brew.notes || "<no notes>"}</Text>
-                </View>
-              </View>
-            );
-          }}
-        </Query>
+        <View style={styles.card}>
+          <Query query={GET_BREW} variables={{ id: brewID }}>
+            {({ loading, error, data }) => {
+              const isLoaded = !loading && !error;
+              const brew = isLoaded ? data.brews[0] : {};
+              return (
+                <Fragment>
+                  <View style={styles.titleRow}>
+                    <Text style={styles.title}>
+                      {isLoaded
+                        ? new Date(brew.created_at).toDateString()
+                        : loading ? "Loading..." : "Error :("}
+                    </Text>
+                    <Rating rating={brew.rating} ratingCount={5} />
+                  </View>
+                  {isLoaded ? (
+                    <View style={styles.body}>
+                      {brew.notes ? (
+                        <Text style={styles.notes}>{brew.notes}</Text>
+                      ) : null}
+                    </View>
+                  ) : null}
+                </Fragment>
+              );
+            }}
+          </Query>
+        </View>
       </TouchableOpacity>
     );
   }
