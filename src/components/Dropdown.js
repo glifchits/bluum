@@ -50,7 +50,7 @@ export default class Dropdown extends React.Component {
   }
 
   render() {
-    const { label, selectedValue, onValueChange, options } = this.props;
+    const { label, selectedValue, onValueChange, options, layout } = this.props;
 
     const dropdown = (
       <TouchableWithoutFeedback onPress={this.togglePicker}>
@@ -103,8 +103,20 @@ export default class Dropdown extends React.Component {
     );
 
     return (
-      <View style={styles.container}>
-        {label ? <Text style={styles.label}>{label}</Text> : null}
+      <View
+        style={
+          layout === "block"
+            ? blockStyles.blockContainer
+            : inlineStyles.container
+        }
+      >
+        {label ? (
+          <Text
+            style={layout === "block" ? blockStyles.label : inlineStyles.label}
+          >
+            {label}
+          </Text>
+        ) : null}
         <View style={styles.dropdownContainer}>
           {Platform.OS === "android" ? androidPicker : dropdown}
         </View>
@@ -114,7 +126,19 @@ export default class Dropdown extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+const blockStyles = StyleSheet.create({
+  container: {
+    flexDirection: "column",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  label: {
+    fontFamily: FONT_BOLD,
+    color: BROWN,
+  },
+});
+
+const inlineStyles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
@@ -125,6 +149,9 @@ const styles = StyleSheet.create({
     flex: 0,
     fontFamily: FONT_REG,
   },
+});
+
+const styles = StyleSheet.create({
   dropdownContainer: {
     flex: 3,
   },
