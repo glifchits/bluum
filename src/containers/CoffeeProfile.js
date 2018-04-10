@@ -208,7 +208,7 @@ export default class CoffeeProfileScreen extends React.Component {
         </ScrollView>
         <ButtonBar
           buttonText="Brew These Beans"
-          onPress={() => this.handleAddBrew(coffee.id)}
+          onPress={() => this.handleAddBrew(coffeeID)}
         />
       </View>
     );
