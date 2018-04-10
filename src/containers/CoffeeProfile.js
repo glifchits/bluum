@@ -136,7 +136,7 @@ export default class CoffeeProfileScreen extends React.Component {
           const sortedBrews = [...data.brews].sort((a, b) => {
             switch (this.state.sortBy) {
               case "date":
-                return new Date(a.created_at) - new Date(b.created_at);
+                return new Date(b.created_at) - new Date(a.created_at);
               case "rating":
                 return b.rating - a.rating;
               default:
