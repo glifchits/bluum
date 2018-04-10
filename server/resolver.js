@@ -30,6 +30,27 @@ exports.resolvers = {
     },
   },
 
+  Mutation: {
+    async createBrew(_, args) {
+      const { coffeeID, metadata, flavours, ...otherArgs } = args;
+      let insertValues = {
+        coffee_id: coffeeID,
+        flavours: flavours ? JSON.stringify(flavours) : null,
+        metadata: JSON.stringify(metadata || {}),
+        ...otherArgs,
+      };
+      let insertCols = Object.keys(insertValues);
+      let cols = insertCols.join(", ");
+      let interpVals = insertCols.map(c => "${" + c + "}").join(", ");
+      let q = `
+        INSERT INTO brews (${cols})
+        VALUES (${interpVals})
+        RETURNING *;
+      `;
+      return await psql.one(q, insertValues);
+    },
+  },
+
   Coffee: {
     roaster: async coffee => {
       const q = `

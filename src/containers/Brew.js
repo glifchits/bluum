@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Query } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import { StyleSheet, Text, View, ScrollView, TextInput } from "react-native";
 import {
@@ -14,6 +14,7 @@ import {
 import Rating from "../components/Rating";
 import Dropdown from "../components/Dropdown";
 import CoffeeSummary from "../components/CoffeeSummary";
+import { GET_BREWS_FOR_COFFEE, BREW_FRAGMENT, GET_BREW } from "../queries";
 
 const BREW_METHODS = [
   { label: "Drip", value: "Drip" },
@@ -159,24 +160,8 @@ export default class BrewScreen extends React.Component {
     const { params } = this.props.navigation.state;
     const { brewID, coffeeID } = params;
 
-    const editable = brewID !== null;
+    const editable = brewID === null;
     const headerTitle = editable ? "New Brew" : "About This Brew";
-
-    const GET_BREW = gql`
-      query Brew($id: ID!) {
-        brews(id: $id) {
-          id
-          method
-          metadata
-          created_at
-          notes
-          flavours
-          coffee {
-            id
-          }
-        }
-      }
-    `;
 
     const coffeeDetails = !coffeeID ? (
       <Query query={GET_BREW} variables={{ id: brewID }}>
@@ -200,6 +185,29 @@ export default class BrewScreen extends React.Component {
       </Fragment>
     );
 
+    const ADD_BREW = gql`
+      mutation CreateBrew(
+        $coffeeID: ID!
+        $rating: Float
+        $method: String
+        $notes: String
+        $flavours: [String]
+        $metadata: JSON
+      ) {
+        createBrew(
+          coffeeID: $coffeeID
+          rating: $rating
+          method: $method
+          notes: $notes
+          flavours: $flavours
+          metadata: $metadata
+        ) {
+          ...Brew
+        }
+      }
+      ${BREW_FRAGMENT}
+    `;
+
     return (
       <View style={styles.container}>
         <Header
@@ -220,14 +228,54 @@ export default class BrewScreen extends React.Component {
         <ScrollView style={styles.body}>{coffeeDetails}</ScrollView>
         {editable ? (
           <View style={styles.buttonBar}>
-            <Button
-              fontWeight="700"
-              backgroundColor="#8b8c8c"
-              color="#fff"
-              borderRadius={3}
-              title="Save"
-              onPress={() => this.save()}
-            />
+            <Mutation
+              mutation={ADD_BREW}
+              update={(cache, { data }) => {
+                const { brews } = cache.readQuery({
+                  query: GET_BREWS_FOR_COFFEE,
+                  variables: { id: coffeeID },
+                });
+                cache.writeQuery({
+                  query: GET_BREWS_FOR_COFFEE,
+                  variables: { id: coffeeID },
+                  data: { brews: [...brews, data.createBrew] },
+                });
+              }}
+              onCompleted={data => {
+                // see handleSelectBrew
+                this.props.navigation.navigate("Brew", {
+                  brewID: data.createBrew.id,
+                  coffeeID: null,
+                });
+              }}
+            >
+              {(addBrew, { loading, error }) => {
+                const { rating, method, notes, ...metadata } = this.state;
+                return (
+                  <Button
+                    fontWeight="700"
+                    backgroundColor="#8b8c8c"
+                    color="#fff"
+                    borderRadius={3}
+                    title="Save"
+                    loading={!!loading}
+                    disabled={!!loading}
+                    onPress={e => {
+                      addBrew({
+                        variables: {
+                          coffeeID,
+                          rating,
+                          method,
+                          notes,
+                          // flavours
+                          metadata,
+                        },
+                      });
+                    }}
+                  />
+                );
+              }}
+            </Mutation>
           </View>
         ) : null}
       </View>

@@ -9,6 +9,7 @@ import Header from "../components/Header";
 import CoffeeSummary from "../components/CoffeeSummary";
 import brews from "../testdata/brews.js";
 import { sortCoffee } from "../utils/utils";
+import { GET_BREWS_FOR_COFFEE } from "../queries";
 import {
   FONT_REG,
   FONT_BOLD,
@@ -114,19 +115,6 @@ export default class CoffeeProfileScreen extends React.Component {
     const { coffeeID } = params;
     const { sortBy } = this.state;
 
-    // TODO sort brews on server side with a GraphQL argument
-    const GET_BREWS_FOR_COFFEE = gql`
-      query BrewsForCoffee($id: ID!) {
-        brews(coffee: $id) {
-          id
-          created_at
-          method
-          notes
-          rating
-        }
-      }
-    `;
-
     const myBrewsBody = (
       <Query query={GET_BREWS_FOR_COFFEE} variables={{ id: coffeeID }}>
         {({ loading, error, data }) => {
@@ -136,7 +124,7 @@ export default class CoffeeProfileScreen extends React.Component {
           const sortedBrews = [...data.brews].sort((a, b) => {
             switch (this.state.sortBy) {
               case "date":
-                return new Date(a.created_at) - new Date(b.created_at);
+                return new Date(b.created_at) - new Date(a.created_at);
               case "rating":
                 return b.rating - a.rating;
               default:
@@ -208,7 +196,7 @@ export default class CoffeeProfileScreen extends React.Component {
         </ScrollView>
         <ButtonBar
           buttonText="Brew These Beans"
-          onPress={() => this.handleAddBrew(coffee.id)}
+          onPress={() => this.handleAddBrew(coffeeID)}
         />
       </View>
     );
