@@ -33,33 +33,50 @@ const CoffeeCard = ({ coffeeID, onPress }) => {
   `;
 
   return (
-    <Query query={COFFEE_QUERY} variables={{ id: coffeeID }}>
-      {({ loading, error, data }) => {
-        if (loading) return <Text>Loading...</Text>;
-        if (error) return <Text>Error:(</Text>;
-        const coffee = data.coffee[0];
-        return (
-          <TouchableOpacity onPress={onPress}>
-            <View style={styles.card}>
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.card}>
+        <Query query={COFFEE_QUERY} variables={{ id: coffeeID }}>
+          {({ loading, error, data }) => {
+            const isLoaded = !loading && !error;
+            const coffee = isLoaded ? data.coffee[0] : {};
+
+            let imageContainer = (
               <View style={styles.imageContainer}>
                 <Image
                   source={require("../assets/images/Cool-Cup.png")}
                   style={styles.cupImage}
                 />
                 <Text style={styles.cupLetter}>
-                  {coffee.name.charAt(0).toUpperCase()}
+                  {isLoaded && coffee.name.charAt(0).toUpperCase()}
                 </Text>
               </View>
+            );
+
+            let infoContainer = (
               <View style={styles.infoContainer}>
-                <Text style={styles.name}>{coffee.name}</Text>
-                <Text style={styles.roaster}>{coffee.roaster.name}</Text>
-                <Rating rating={Math.round(coffee.avgRating)} ratingCount={5} />
+                <Text style={styles.name}>
+                  {loading ? "Loading..." : error ? "Error :(" : coffee.name}
+                </Text>
+                <Text style={styles.roaster}>
+                  {isLoaded ? coffee.roaster.name : ""}
+                </Text>
+                <Rating
+                  rating={isLoaded ? Math.round(coffee.avgRating) : 0}
+                  ratingCount={5}
+                />
               </View>
-            </View>
-          </TouchableOpacity>
-        );
-      }}
-    </Query>
+            );
+
+            return (
+              <Fragment>
+                {imageContainer}
+                {infoContainer}
+              </Fragment>
+            );
+          }}
+        </Query>
+      </View>
+    </TouchableOpacity>
   );
 };
 
