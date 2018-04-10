@@ -9,11 +9,12 @@ import {
   Button,
   ScrollView,
 } from "react-native";
-import { Icon } from "react-native-elements";
+import { Icon, Slider } from "react-native-elements";
 import {
   FONT_REG,
   FONT_BOLD,
   LIGHT_BROWN,
+  BROWN,
   OFF_BLACK,
   BORDER_RADIUS,
 } from "../styles/common";
@@ -38,6 +39,7 @@ export default class AddNewCoffee extends React.Component {
         coffeeRoaster: "",
         coffeeRoast: "light",
         coffeeDescription: "",
+        rating: null,
       },
     };
   }
@@ -61,6 +63,12 @@ export default class AddNewCoffee extends React.Component {
   _handleRoastChange = (itemValue, itemIndex) => {
     let newInputValues = { ...this.state.inputValues };
     newInputValues.coffeeRoast = itemValue;
+    this.setState({ inputValues: newInputValues });
+  };
+
+  _handleChangeRating = value => {
+    let newInputValues = { ...this.state.inputValues };
+    newInputValues.rating = value;
     this.setState({ inputValues: newInputValues });
   };
 
@@ -104,6 +112,22 @@ export default class AddNewCoffee extends React.Component {
             layout="block"
           />
           <Text style={styles.sectionTitle}>Optional Information</Text>
+          <View style={styles.sliderContainer}>
+            <Text style={styles.sliderLabel}>Rating</Text>
+            <Slider
+              value={inputValues.rating}
+              onValueChange={this._handleChangeRating}
+              minimumValue={0}
+              maximumValue={5}
+              step={0.5}
+              thumbTintColor={BROWN}
+              minimumTrackTintColor={LIGHT_BROWN}
+              maximumTrackTintColor="#e5e5e5"
+            />
+            {inputValues.rating ? (
+              <Text style={styles.rating}>{inputValues.rating}/5</Text>
+            ) : null}
+          </View>
           <FormTextInput
             label="Description"
             placeholder="Enter a short description for this coffee"
@@ -138,5 +162,11 @@ const styles = StyleSheet.create({
     marginTop: 30,
     fontFamily: FONT_REG,
     color: OFF_BLACK,
+    marginBottom: 15,
+  },
+  sliderLabel: {
+    fontFamily: FONT_BOLD,
+    color: BROWN,
+    marginBottom: 5,
   },
 });

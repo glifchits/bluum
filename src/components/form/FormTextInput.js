@@ -31,15 +31,17 @@ export default class FormTextInput extends React.Component {
 
 const styles = StyleSheet.create({
   formInputContainer: {
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 15,
+    marginBottom: 15,
   },
   formLabel: {
     fontFamily: FONT_BOLD,
     color: BROWN,
+    marginBottom: 5,
   },
   formTextInput: {
     fontFamily: FONT_REG,
     color: LIGHT_BROWN,
+    fontSize: 16,
   },
 });
