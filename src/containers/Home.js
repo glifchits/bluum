@@ -10,6 +10,7 @@ import {
   Button,
   Dimensions,
   Image,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { StackNavigator } from "react-navigation";
@@ -80,12 +81,13 @@ export default class HomeScreen extends React.Component {
     header: null,
   };
 
-  _handleSearchChange = inputValue => this.setState({ inputValue });
-
-  _handleSearchClear = () => this.setState({ inputvalue: "" });
-
-  handleSelectCoffee = coffeeID => {
+  _handleSelectCoffee = coffeeID => {
     this.props.navigation.navigate("CoffeeProfile", { coffeeID });
+  };
+
+  _handleSearchPress = () => {
+    console.log("pressed!");
+    this.props.navigation.navigate("Search");
   };
 
   render() {
@@ -99,20 +101,13 @@ export default class HomeScreen extends React.Component {
           <Text style={styles.appTitle}>COOL BEANS</Text>
         </View>
         <View style={styles.defaultContainer}>
-          <View style={styles.searchContainer}>
-            <Icon type="material" name="local-cafe" color={LIGHT_BROWN} />
-            <TextInput
-              key="searchTextInput"
-              placeholder="Search coffee"
-              onFocus={() => {
-                this.props.navigation.navigate("Search");
-              }}
-              underlineColorAndroid="transparent"
-              style={styles.searchInput}
-              placeholderTextColor={LIGHT_BROWN}
-            />
-          </View>
-          <RecentlyBrewed handleSelectCoffee={this.handleSelectCoffee} />
+          <TouchableWithoutFeedback onPressIn={this._handleSearchPress}>
+            <View style={styles.searchContainer}>
+              <Icon type="material" name="local-cafe" color={LIGHT_BROWN} />
+              <Text style={styles.searchInput}>Search for a coffee</Text>
+            </View>
+          </TouchableWithoutFeedback>
+          <RecentlyBrewed handleSelectCoffee={this._handleSelectCoffee} />
         </View>
       </View>
     );
