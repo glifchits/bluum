@@ -14,7 +14,7 @@ import {
 import Rating from "../components/Rating";
 import Dropdown from "../components/Dropdown";
 import CoffeeSummary from "../components/CoffeeSummary";
-import { GET_BREWS_FOR_COFFEE, BREW_FRAGMENT } from "../queries";
+import { GET_BREWS_FOR_COFFEE, BREW_FRAGMENT, GET_BREW } from "../queries";
 
 const BREW_METHODS = [
   { label: "Drip", value: "Drip" },
@@ -162,15 +162,6 @@ export default class BrewScreen extends React.Component {
 
     const editable = brewID === null;
     const headerTitle = editable ? "New Brew" : "About This Brew";
-
-    const GET_BREW = gql`
-      query Brew($id: ID!) {
-        brews(id: $id) {
-          ...Brew
-        }
-      }
-      ${BREW_FRAGMENT}
-    `;
 
     const coffeeDetails = !coffeeID ? (
       <Query query={GET_BREW} variables={{ id: brewID }}>

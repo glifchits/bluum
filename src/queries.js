@@ -25,3 +25,12 @@ export const GET_BREWS_FOR_COFFEE = gql`
   }
   ${BREW_FRAGMENT}
 `;
+
+export const GET_BREW = gql`
+  query Brew($id: ID!) {
+    brews(id: $id) {
+      ...Brew
+    }
+  }
+  ${BREW_FRAGMENT}
+`;

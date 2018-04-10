@@ -14,6 +14,7 @@ import {
   FONT_BOLD,
 } from "../styles/common";
 import Rating from "./Rating";
+import { GET_BREW } from "../queries";
 
 export default class BrewCard extends React.Component {
   constructor(props) {
@@ -22,21 +23,6 @@ export default class BrewCard extends React.Component {
 
   render() {
     const { brewID, onPress } = this.props;
-
-    const GET_BREW = gql`
-      query Brew($id: ID!) {
-        brews(id: $id) {
-          id
-          method
-          rating
-          metadata
-          created_at
-          notes
-          flavours
-        }
-      }
-    `;
-
     return (
       <TouchableOpacity onPress={onPress}>
         <View style={styles.card}>
