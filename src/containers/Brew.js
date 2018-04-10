@@ -166,17 +166,10 @@ export default class BrewScreen extends React.Component {
     const GET_BREW = gql`
       query Brew($id: ID!) {
         brews(id: $id) {
-          id
-          method
-          metadata
-          created_at
-          notes
-          flavours
-          coffee {
-            id
-          }
+          ...Brew
         }
       }
+      ${BREW_FRAGMENT}
     `;
 
     const coffeeDetails = !coffeeID ? (
