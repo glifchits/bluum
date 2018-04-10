@@ -159,7 +159,7 @@ export default class BrewScreen extends React.Component {
     const { params } = this.props.navigation.state;
     const { brewID, coffeeID } = params;
 
-    const editable = brewID !== null;
+    const editable = brewID === null;
     const headerTitle = editable ? "New Brew" : "About This Brew";
 
     const GET_BREW = gql`
