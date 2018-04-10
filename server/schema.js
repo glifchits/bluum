@@ -51,6 +51,14 @@ const typeDefs = `
     coffee(id: ID, limit: Int, offset: Int): [Coffee]!
     brews(id: ID, limit: Int, offset: Int, coffee: ID): [Brew]!
   }
+
+  # following mutations are allowed
+  type Mutation {
+    createBrew(
+      coffeeID: ID!, rating: Float, flavours: [String],
+      method: String, notes: String, metadata: JSON
+    ): Brew
+  }
 `;
 
 exports.schema = makeExecutableSchema({
