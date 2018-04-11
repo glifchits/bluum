@@ -127,8 +127,8 @@ export default class Dropdown extends React.Component {
 const blockStyles = StyleSheet.create({
   container: {
     flexDirection: "column",
-    marginTop: 15,
-    marginBottom: 15,
+    marginTop: 12,
+    marginBottom: 12,
   },
   label: {
     fontFamily: FONT_BOLD,

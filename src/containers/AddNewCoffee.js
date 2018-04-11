@@ -3,7 +3,6 @@ import {
   View,
   TextInput,
   Text,
-  FlatList,
   StyleSheet,
   Form,
   Button,
@@ -134,6 +133,8 @@ export default class AddNewCoffee extends React.Component {
             value={inputValues.coffeeDescription}
             type="coffeeDescription"
             onChange={this._handleInputChange}
+            multiline
+            numberOfLines={4}
           />
         </ScrollView>
         <ButtonBar

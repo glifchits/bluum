@@ -1,9 +1,15 @@
 import React, { Fragment } from "react";
 import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
-import { StyleSheet, Text, View, ScrollView, TextInput } from "react-native";
 import {
-  Header,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TextInput,
+  FlatList,
+} from "react-native";
+import {
   Icon,
   ButtonGroup,
   List,
@@ -11,9 +17,21 @@ import {
   Button,
   Slider,
 } from "react-native-elements";
+import {
+  FONT_REG,
+  FONT_BOLD,
+  LIGHT_BROWN,
+  BROWN,
+  OFF_BLACK,
+  BORDER_RADIUS,
+} from "../styles/common";
 import Rating from "../components/Rating";
 import Dropdown from "../components/Dropdown";
 import CoffeeSummary from "../components/CoffeeSummary";
+import Header from "../components/Header";
+import ButtonBar from "../components/ButtonBar";
+import FormTextInput from "../components/form/FormTextInput";
+import BrewPropEntry from "../components/BrewPropEntry";
 import { GET_BREWS_FOR_COFFEE, BREW_FRAGMENT, GET_BREW } from "../queries";
 
 const BREW_METHODS = [
@@ -30,7 +48,7 @@ export default class BrewScreen extends React.Component {
     super(props);
 
     this.state = {
-      rating: 3,
+      rating: 0,
       method: "Drip",
       notes: "",
       coarseness: 0,
@@ -47,35 +65,38 @@ export default class BrewScreen extends React.Component {
 
   renderItems(brew) {
     const EntryOrNull = ({ title, value }) =>
-      value ? (
-        <ListItem key={title} title={title} subtitle={value} hideChevron />
-      ) : null;
+      value ? <BrewPropEntry title={title} value={value} /> : null;
 
     return (
-      <List style={styles.brewInfo}>
-        <EntryOrNull
-          title="Brew Date"
-          value={new Date(brew.created_at).toDateString()}
-        />
-        <EntryOrNull title="Notes" value={brew.notes} />
-        <EntryOrNull title="Method" value={brew.method} />
-        <EntryOrNull
-          title="Grind Coarseness"
-          value={(brew.metadata || {})["Grind Coarseness"]}
-        />
-        <EntryOrNull
-          title="Coffee Weight (g)"
-          value={(brew.metadata || {})["Coffee Weight (g)"]}
-        />
-        <EntryOrNull
-          title="Water Weight (g)"
-          value={(brew.metadata || {})["Water Weight (g)"]}
-        />
-        <EntryOrNull
-          title="Flavours"
-          value={[...(brew.flavours || [])].sort().join(", ")}
-        />
-      </List>
+      <FlatList
+        style={styles.brewInfo}
+        data={[
+          {
+            title: "Brew Date",
+            value: new Date(brew.created_at).toDateString(),
+          },
+          { title: "Notes", value: brew.notes },
+          { title: "Method", value: brew.method },
+          {
+            title: "Grind Coarseness",
+            value: (brew.metadata || {})["Grind Coarseness"],
+          },
+          {
+            title: "Coffee Weight (g)",
+            value: (brew.metadata || {})["Coffee Weight (g)"],
+          },
+          {
+            title: "Water Weight (g)",
+            value: (brew.metadata || {})["Water Weight (g)"],
+          },
+          {
+            title: "Tasting Notes",
+            value: [...(brew.flavours || [])].sort().join(", "),
+          },
+        ]}
+        renderItem={({ item }) => <EntryOrNull {...item} />}
+        keyExtractor={item => item.title}
+      />
     );
   }
 
@@ -85,72 +106,67 @@ export default class BrewScreen extends React.Component {
   }
 
   renderForm() {
+    const { rating, coarseness } = this.state;
     return (
       <ScrollView style={styles.brewForm}>
-        <View style={styles.brewFormRow}>
-          <Text style={styles.label}>Your Rating</Text>
+        <View style={styles.sliderContainer}>
+          <Text style={styles.sliderLabel}>Your Rating</Text>
           <Slider
-            value={this.state.rating}
+            value={rating}
             onValueChange={value => this.setState({ rating: value })}
             minimumValue={0}
             maximumValue={5}
             step={0.5}
-            thumbTintColor="#3e92d4"
-            minimumTrackTintColor="#61A5DB"
+            thumbTintColor={BROWN}
+            minimumTrackTintColor={LIGHT_BROWN}
             maximumTrackTintColor="#e5e5e5"
           />
-          <Text>Rating: {this.state.rating}/5</Text>
+          <Text style={styles.rating}>{rating}/5</Text>
         </View>
-        <View style={styles.brewFormRow}>
-          <Text style={styles.label}>Brew Method</Text>
-          <Dropdown
-            selectedValue={this.state.method}
-            onValueChange={(itemValue, itemIndex) => {
-              this.setState({ method: itemValue });
-            }}
-            options={BREW_METHODS}
-          />
-        </View>
-        <View style={styles.brewFormRow}>
-          <Text style={styles.label}>Notes</Text>
-          <TextInput
-            onChangeText={text => this.setState({ notes: text })}
-            value={this.state.notes}
-            placeholder="Enter in some notes"
-            multiline
-            numberOfLines={4}
-          />
-        </View>
-        <View style={styles.brewFormRow}>
-          <Text style={styles.label}>Grind Coarseness</Text>
+        <Dropdown
+          label="Brew Method"
+          selectedValue={this.state.method}
+          onValueChange={(itemValue, itemIndex) => {
+            this.setState({ method: itemValue });
+          }}
+          options={BREW_METHODS}
+          layout="block"
+        />
+        <FormTextInput
+          label="Notes"
+          placeholder="Enter in some notes"
+          value={this.state.notes}
+          type="coffeeName"
+          onChange={text => this.setState({ notes: text })}
+          multiline
+          numberOfLines={4}
+        />
+        <View style={styles.sliderContainer}>
+          <Text style={styles.sliderLabel}>Grind Coarseness</Text>
           <Slider
-            value={this.state.coarseness}
+            value={coarseness}
             onValueChange={value => this.setState({ coarseness: value })}
             minimumValue={0}
-            maximumValue={10}
-            step={1}
-            thumbTintColor="#3e92d4"
-            minimumTrackTintColor="#61A5DB"
+            maximumValue={5}
+            step={0.5}
+            thumbTintColor={BROWN}
+            minimumTrackTintColor={LIGHT_BROWN}
             maximumTrackTintColor="#e5e5e5"
           />
-          <Text>Rating: {this.state.coarseness}/10</Text>
+          <Text style={styles.rating}>{coarseness}/10</Text>
         </View>
-        <View style={styles.brewFormRow}>
-          <Text style={styles.label}>Amount of Coffee (g)</Text>
-          <TextInput
-            onChangeText={text => this.setState({ coffee_weight: text })}
-            value={this.state.coffee_weight}
-            placeholder="Enter how much coffee you used"
-          />
-        </View>
-        <View style={styles.brewFormRow}>
-          <Text style={styles.label}>Amount of Water (g)</Text>
-          <TextInput
-            onChangeText={text => this.setState({ water_weight: text })}
-            value={this.state.water_weight}
-            placeholder="Enter how much coffee you used"
-          />
-        </View>
+        <FormTextInput
+          label="Amount of Coffee (g)"
+          placeholder="Enter how much coffee you used"
+          value={this.state.coffee_weight}
+          onChange={text => this.setState({ coffee_weight: text })}
+        />
+        <FormTextInput
+          label="Amount of Water (g)"
+          placeholder="Enter how much water you used"
+          value={this.state.water_weight}
+          onChange={text => this.setState({ water_weight: text })}
+        />
       </ScrollView>
     );
   }
@@ -213,17 +229,13 @@ export default class BrewScreen extends React.Component {
         <Header
           leftComponent={
             <Icon
-              name="arrow-back"
+              type="material"
+              name="chevron-left"
               color="#fff"
               onPress={() => this.props.navigation.goBack()}
             />
           }
-          centerComponent={{
-            text: headerTitle,
-            style: { color: "#fff" },
-          }}
-          outerContainerStyles={{ backgroundColor: "#8b8c8c" }}
-          innerContainerStyles={{ justifyContent: "space-between" }}
+          centerComponent={<Text style={styles.headerName}>{headerTitle}</Text>}
         />
         <ScrollView style={styles.body}>{coffeeDetails}</ScrollView>
         {editable ? (
@@ -243,23 +255,14 @@ export default class BrewScreen extends React.Component {
               }}
               onCompleted={data => {
                 // see handleSelectBrew
-                this.props.navigation.navigate("Brew", {
-                  brewID: data.createBrew.id,
-                  coffeeID: null,
-                });
+                this.props.navigation.goBack();
               }}
             >
               {(addBrew, { loading, error }) => {
                 const { rating, method, notes, ...metadata } = this.state;
                 return (
-                  <Button
-                    fontWeight="700"
-                    backgroundColor="#8b8c8c"
-                    color="#fff"
-                    borderRadius={3}
-                    title="Save"
-                    loading={!!loading}
-                    disabled={!!loading}
+                  <ButtonBar
+                    buttonText="Add This Coffee"
                     onPress={e => {
                       addBrew({
                         variables: {
@@ -291,22 +294,21 @@ const styles = StyleSheet.create({
   body: {
     padding: 20,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  brewFormRow: {
+  brewForm: {
     paddingTop: 10,
-    paddingBottom: 10,
   },
-  buttonBar: {
-    paddingTop: 20,
-    paddingBottom: 20,
-    shadowColor: "#353535",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
-    borderTopWidth: 1,
-    borderColor: "#d9d9d9",
+  headerName: {
+    fontSize: 18,
+    fontFamily: FONT_REG,
+    color: "#fff",
+  },
+  sliderLabel: {
+    fontFamily: FONT_BOLD,
+    color: BROWN,
+    marginBottom: 5,
+  },
+  sliderContainer: {
+    marginTop: 12,
+    marginBottom: 12,
   },
 });
