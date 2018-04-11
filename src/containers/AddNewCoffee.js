@@ -48,7 +48,7 @@ class ShowRoasterModal extends React.Component {
   _handleSearchChange = inputValue => this.setState({ inputValue });
 
   render() {
-    const { onSelectRoaster } = this.props;
+    const { onSelectRoaster, onAddNewRoaster } = this.props;
 
     const GET_ROASTERS = gql`
       {
@@ -91,7 +91,12 @@ class ShowRoasterModal extends React.Component {
                     )}
                     keyExtractor={item => item.id}
                     ListFooterComponent={
-                      <TouchableWithoutFeedback onPress={this.onAddNewRoaster}>
+                      <TouchableWithoutFeedback
+                        onPress={() => {
+                          this.props.onCloseModal();
+                          onAddNewRoaster();
+                        }}
+                      >
                         <View style={styles.card}>
                           <Text style={{ fontFamily: FONT_BOLD }}>
                             Don't see a roaster? Add it!
@@ -157,6 +162,10 @@ export default class AddNewCoffee extends React.Component {
     });
   };
 
+  onAddNewRoaster = () => {
+    this.props.navigation.navigate("AddNewRoaster");
+  };
+
   onCloseRoasterModal = () => this.setState({ showRoasterModal: false });
 
   _handleChangeRating = value => {
@@ -206,6 +215,7 @@ export default class AddNewCoffee extends React.Component {
             <ShowRoasterModal
               onGoBack={this.onCloseRoasterModal}
               onSelectRoaster={this.onSelectRoaster}
+              onAddNewRoaster={this.onAddNewRoaster}
               onCloseModal={this.onCloseRoasterModal}
             />
           ) : null}

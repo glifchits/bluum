@@ -5,6 +5,7 @@ import HomeScreen from "./containers/Home";
 import SearchScreen from "./containers/SearchScreen";
 import MyCoffeeScreen from "./containers/MyCoffee.js";
 import AddNewCoffee from "./containers/AddNewCoffee.js";
+import AddNewRoaster from "./containers/AddNewRoaster.js";
 import Profile from "./containers/Profile";
 import CoffeeProfileScreen from "./containers/CoffeeProfile";
 import BrewScreen from "./containers/Brew";
@@ -33,6 +34,9 @@ const SearchStack = StackNavigator({
   },
   AddNewCoffee: {
     screen: AddNewCoffee,
+  },
+  AddNewRoaster: {
+    screen: AddNewRoaster,
   },
 });
 
