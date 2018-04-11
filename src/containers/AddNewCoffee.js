@@ -1,4 +1,6 @@
-import React from "react";
+import React, { Fragment } from "react";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 import {
   View,
   TextInput,
@@ -8,25 +10,105 @@ import {
   Form,
   Button,
   ScrollView,
+  Modal,
+  SafeAreaView,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import {
   FONT_REG,
   FONT_BOLD,
   LIGHT_BROWN,
+  BROWN,
   OFF_BLACK,
   BORDER_RADIUS,
+  BORDER_COLOR_GREY,
+  SHADOW_COLOR,
+  SHADOW_OFFSET,
+  SHADOW_RADIUS,
 } from "../styles/common";
 import Header from "../components/Header";
 import ButtonBar from "../components/ButtonBar";
 import FormTextInput from "../components/form/FormTextInput";
 import Dropdown from "../components/Dropdown";
+import coffee from "../testdata/my_coffees";
+import SearchbarHeader from "../components/SearchbarHeader";
 
 const ROAST_OPTIONS = [
   { label: "Light", value: "light" },
   { label: "Medium", value: "medium" },
   { label: "Dark", value: "dark" },
 ];
+
+class ShowRoasterModal extends React.Component {
+  state = {
+    inputValue: "",
+  };
+
+  _handleSearchChange = inputValue => this.setState({ inputValue });
+
+  render() {
+    const { onSelectRoaster } = this.props;
+
+    const GET_ROASTERS = gql`
+      {
+        roasters {
+          id
+          name
+        }
+      }
+    `;
+
+    return (
+      <Modal
+        onRequestClose={this.props.onCloseModal}
+        animationType="slide"
+        presentationStyle="fullScreen"
+      >
+        <SafeAreaView style={{ flex: 1 }}>
+          <SearchbarHeader
+            value={this.state.inputValue}
+            onGoBack={this.props.onGoBack}
+            onChange={this._handleSearchChange}
+          />
+          <View style={{ padding: 10 }}>
+            <Query query={GET_ROASTERS}>
+              {({ loading, error, data }) => {
+                if (loading) return <Text>Loading...</Text>;
+                if (error) return <Text>Error :(</Text>;
+                return (
+                  <FlatList
+                    style={{ flexGrow: 1 }}
+                    data={data.roasters}
+                    renderItem={({ item }) => (
+                      <TouchableWithoutFeedback
+                        onPress={() => onSelectRoaster(item)}
+                      >
+                        <View style={styles.card}>
+                          <Text>{item.name}</Text>
+                        </View>
+                      </TouchableWithoutFeedback>
+                    )}
+                    keyExtractor={item => item.id}
+                    ListFooterComponent={
+                      <TouchableWithoutFeedback onPress={this.onAddNewRoaster}>
+                        <View style={styles.card}>
+                          <Text style={{ fontFamily: FONT_BOLD }}>
+                            Don't see a roaster? Add it!
+                          </Text>
+                        </View>
+                      </TouchableWithoutFeedback>
+                    }
+                  />
+                );
+              }}
+            </Query>
+          </View>
+        </SafeAreaView>
+      </Modal>
+    );
+  }
+}
 
 export default class AddNewCoffee extends React.Component {
   constructor(props) {
@@ -35,10 +117,11 @@ export default class AddNewCoffee extends React.Component {
     this.state = {
       inputValues: {
         coffeeName: "",
-        coffeeRoaster: "",
         coffeeRoast: "light",
         coffeeDescription: "",
       },
+      selectedRoaster: null,
+      showRoasterModal: false,
     };
   }
 
@@ -64,8 +147,19 @@ export default class AddNewCoffee extends React.Component {
     this.setState({ inputValues: newInputValues });
   };
 
+  onBeginSelectRoaster = e => this.setState({ showRoasterModal: true });
+
+  onSelectRoaster = roaster => {
+    this.setState({
+      showRoasterModal: false,
+      selectedRoaster: roaster,
+    });
+  };
+
+  onCloseRoasterModal = () => this.setState({ showRoasterModal: false });
+
   render() {
-    const { inputValues } = this.state;
+    const { inputValues, selectedRoaster } = this.state;
     return (
       <View style={styles.container}>
         <Header
@@ -89,13 +183,25 @@ export default class AddNewCoffee extends React.Component {
             type="coffeeName"
             onChange={this._handleInputChange}
           />
-          <FormTextInput
-            label="Roaster (Required)"
-            placeholder="Who roasted this coffee?"
-            value={inputValues.coffeeRoaster}
-            type="coffeeRoaster"
-            onChange={this._handleInputChange}
-          />
+          <TouchableWithoutFeedback onPress={this.onBeginSelectRoaster}>
+            <View style={{ marginTop: 10, marginBottom: 20 }}>
+              <Text style={{ fontFamily: FONT_BOLD, color: BROWN }}>
+                Roaster (Required)
+              </Text>
+              <Text style={{ fontFamily: FONT_REG, color: LIGHT_BROWN }}>
+                {selectedRoaster === null
+                  ? "Who roasted this coffee?"
+                  : selectedRoaster.name}
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
+          {this.state.showRoasterModal ? (
+            <ShowRoasterModal
+              onGoBack={this.onCloseRoasterModal}
+              onSelectRoaster={this.onSelectRoaster}
+              onCloseModal={this.onCloseRoasterModal}
+            />
+          ) : null}
           <Dropdown
             label="Roast Color (Required)"
             selectedValue={inputValues.coffeeRoast}
@@ -138,5 +244,24 @@ const styles = StyleSheet.create({
     marginTop: 30,
     fontFamily: FONT_REG,
     color: OFF_BLACK,
+  },
+  // select roasters
+  card: {
+    width: "100%",
+    borderColor: BORDER_COLOR_GREY,
+    borderRadius: BORDER_RADIUS,
+    borderWidth: 1,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+    marginTop: 5,
+    marginBottom: 5,
+    shadowColor: SHADOW_COLOR,
+    shadowOffset: SHADOW_OFFSET,
+    shadowRadius: SHADOW_RADIUS,
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    alignItems: "center",
   },
 });
