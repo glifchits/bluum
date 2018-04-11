@@ -105,9 +105,7 @@ export default class Dropdown extends React.Component {
     return (
       <View
         style={
-          layout === "block"
-            ? blockStyles.blockContainer
-            : inlineStyles.container
+          layout === "block" ? blockStyles.container : inlineStyles.container
         }
       >
         {label ? (
@@ -129,12 +127,13 @@ export default class Dropdown extends React.Component {
 const blockStyles = StyleSheet.create({
   container: {
     flexDirection: "column",
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 12,
+    marginBottom: 12,
   },
   label: {
     fontFamily: FONT_BOLD,
     color: BROWN,
+    marginBottom: 5,
   },
 });
 
@@ -162,6 +161,7 @@ const styles = StyleSheet.create({
   dropdownLabel: {
     fontFamily: FONT_REG,
     color: LIGHT_BROWN,
+    fontSize: 16,
   },
   iOSPickerItem: {
     color: OFF_BLACK,

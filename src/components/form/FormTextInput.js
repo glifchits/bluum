@@ -10,7 +10,15 @@ import {
 
 export default class FormTextInput extends React.Component {
   render() {
-    const { label, placeholder, value, type, onChange } = this.props;
+    const {
+      label,
+      placeholder,
+      value,
+      type,
+      onChange,
+      multiline,
+      numberOfLines,
+    } = this.props;
     return (
       <View style={styles.formInputContainer}>
         <Text style={styles.formLabel}>{label}</Text>
@@ -23,6 +31,8 @@ export default class FormTextInput extends React.Component {
           style={styles.formTextInput}
           placeholderTextColor={LIGHT_BROWN}
           underlineColorAndroid="transparent"
+          multiline={multiline}
+          numberOfLines={numberOfLines}
         />
       </View>
     );
@@ -31,15 +41,17 @@ export default class FormTextInput extends React.Component {
 
 const styles = StyleSheet.create({
   formInputContainer: {
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 12,
+    marginBottom: 12,
   },
   formLabel: {
     fontFamily: FONT_BOLD,
     color: BROWN,
+    marginBottom: 5,
   },
   formTextInput: {
     fontFamily: FONT_REG,
     color: LIGHT_BROWN,
+    fontSize: 16,
   },
 });
