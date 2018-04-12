@@ -35,6 +35,15 @@ export const GET_BREW = gql`
   ${BREW_FRAGMENT}
 `;
 
+export const GET_ROASTERS = gql`
+  {
+    roasters {
+      id
+      name
+    }
+  }
+`;
+
 export const CREATE_ROASTER = gql`
   mutation CreateRoaster(
     $name: String!

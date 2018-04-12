@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Query } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import {
   View,
@@ -33,6 +33,7 @@ import FormTextInput from "../components/form/FormTextInput";
 import Dropdown from "../components/Dropdown";
 import coffee from "../testdata/my_coffees";
 import SearchbarHeader from "../components/SearchbarHeader";
+import { CREATE_ROASTER, GET_ROASTERS } from "../queries";
 
 export default class AddNewRoaster extends React.Component {
   state = {
@@ -47,11 +48,6 @@ export default class AddNewRoaster extends React.Component {
   static navigationOptions = {
     header: null,
     tabBarVisible: false,
-  };
-
-  _handleAddRoaster = () => {
-    // Do something
-    console.log("_handleAddRoaster", this.state);
   };
 
   _handleInputChange = (newText, inputName) => {
@@ -80,32 +76,54 @@ export default class AddNewRoaster extends React.Component {
         <ScrollView style={styles.body}>
           <FormTextInput
             label="Name (Required)"
-            placeholder="What name does this coffee roaster go by?"
-            value={inputValues.roasterName}
-            type="roasterName"
+            placeholder="What do they call this roaster?"
+            value={inputValues.name}
+            type="name"
             onChange={this._handleInputChange}
           />
           <FormTextInput
             label="Location"
             placeholder="Where are they located?"
-            value={inputValues.roasterLocation}
-            type="roasterLocation"
+            value={inputValues.location}
+            type="location"
             onChange={this._handleInputChange}
           />
           <FormTextInput
             label="Description"
             placeholder="Some text to brag about this roaster"
-            value={inputValues.roasterDescription}
-            type="roasterDescription"
+            value={inputValues.description}
+            type="description"
             onChange={this._handleInputChange}
             multiline
             numberOfLines={4}
           />
         </ScrollView>
-        <ButtonBar
-          buttonText="Add This Roaster"
-          onPress={this._handleAddRoaster}
-        />
+        <Mutation
+          mutation={CREATE_ROASTER}
+          update={(cache, { data }) => {
+            const { roasters } = cache.readQuery({ query: GET_ROASTERS });
+            const newRoasters = [data.createRoaster, ...roasters];
+            cache.writeQuery({
+              query: GET_ROASTERS,
+              data: { roasters: newRoasters },
+            });
+          }}
+          onCompleted={data => this.props.navigation.goBack()}
+        >
+          {(addRoaster, { loading, error }) => {
+            const { inputValues } = this.state;
+            const { name, location, description, ...metadata } = inputValues;
+            const args = { name, location, description };
+            return (
+              <ButtonBar
+                buttonText="Add This Roaster"
+                onPress={() => {
+                  addRoaster({ variables: { ...args, metadata } });
+                }}
+              />
+            );
+          }}
+        </Mutation>
       </View>
     );
   }
@@ -117,6 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
+    flexGrow: 1,
     padding: 20,
   },
   headerName: {

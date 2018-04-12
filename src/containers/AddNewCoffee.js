@@ -33,6 +33,7 @@ import FormTextInput from "../components/form/FormTextInput";
 import Dropdown from "../components/Dropdown";
 import coffee from "../testdata/my_coffees";
 import SearchbarHeader from "../components/SearchbarHeader";
+import { GET_ROASTERS } from "../queries";
 
 const ROAST_OPTIONS = [
   { label: "Light", value: "light" },
@@ -49,15 +50,6 @@ class ShowRoasterModal extends React.Component {
 
   render() {
     const { onSelectRoaster, onAddNewRoaster } = this.props;
-
-    const GET_ROASTERS = gql`
-      {
-        roasters {
-          id
-          name
-        }
-      }
-    `;
 
     return (
       <Modal
