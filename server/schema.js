@@ -29,7 +29,7 @@ const typeDefs = `
     roaster: Roaster!
     regions: [String]
     metadata: JSON
-    avgRating: Float!
+    avgRating: Float
   }
 
   type Brew {

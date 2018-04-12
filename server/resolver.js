@@ -68,8 +68,8 @@ exports.resolvers = {
         where coffees.id = $1
         group by coffees.id;
       `;
-      const { avgrating } = await psql.one(q, coffee.id);
-      return avgrating;
+      const ret = await psql.oneOrNone(q, coffee.id);
+      return ret ? ret.avgrating : null;
     },
   },
 
