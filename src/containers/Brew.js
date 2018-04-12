@@ -147,8 +147,8 @@ export default class BrewScreen extends React.Component {
             value={coarseness}
             onValueChange={value => this.setState({ coarseness: value })}
             minimumValue={0}
-            maximumValue={5}
-            step={0.5}
+            maximumValue={10}
+            step={1}
             thumbTintColor={BROWN}
             minimumTrackTintColor={LIGHT_BROWN}
             maximumTrackTintColor="#e5e5e5"
