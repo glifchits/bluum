@@ -30,6 +30,7 @@ const typeDefs = `
     regions: [String]
     metadata: JSON
     avgRating: Float
+    last_brewed: Date
   }
 
   type Brew {
@@ -50,6 +51,7 @@ const typeDefs = `
     roasters(id: ID): [Roaster]!,
     coffee(id: ID, limit: Int, offset: Int): [Coffee]!
     brews(id: ID, limit: Int, offset: Int, coffee: ID): [Brew]!
+    latestBrewedCoffees(limit: Int): [Coffee]
   }
 
   # following mutations are allowed

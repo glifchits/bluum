@@ -28,6 +28,17 @@ exports.resolvers = {
       let q = `select * from brews ${whereClause} ${limitClause};`;
       return await psql.manyOrNone(q);
     },
+    async latestBrewedCoffees(_, { limit }) {
+      let q = `
+        select coffee_id, max(b.created_at) time_last_brewed, c.*
+        from brews b
+        inner join coffees c
+          on c.id = b.coffee_id
+        group by coffee_id, c.id
+        order by time_last_brewed;
+      `;
+      return await psql.manyOrNone(q);
+    },
   },
 
   Mutation: {
@@ -70,6 +81,15 @@ exports.resolvers = {
       `;
       const ret = await psql.oneOrNone(q, coffee.id);
       return ret ? ret.avgrating : null;
+    },
+    last_brewed: async coffee => {
+      const q = `
+        select max(created_at) as last_brewed
+        from brews
+        where coffee_id = $1
+      `;
+      const ret = await psql.oneOrNone(q, coffee.id);
+      return ret ? ret.last_brewed : null;
     },
   },
 

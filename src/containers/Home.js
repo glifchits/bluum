@@ -35,7 +35,7 @@ const HEIGHT = Dimensions.get("window").height;
 const RecentlyBrewed = ({ handleSelectCoffee }) => {
   const RECENT_COFFEES = gql`
     {
-      coffee(limit: 2) {
+      latestBrewedCoffees(limit: 2) {
         id
       }
     }
@@ -47,12 +47,16 @@ const RecentlyBrewed = ({ handleSelectCoffee }) => {
         {({ loading, error, data }) => {
           if (loading) return <Text>Loading...</Text>;
           if (error) return <Text>Error :(</Text>;
-          if (!data.coffee.length) {
-            return <Text>You should brew something!</Text>;
+          if (!data.latestBrewedCoffees.length) {
+            return (
+              <Text style={styles.textNoBrews}>
+                Nothing! You should brew something.
+              </Text>
+            );
           }
           return (
             <FlatList
-              data={data.coffee}
+              data={data.latestBrewedCoffees}
               renderItem={({ item }) => (
                 <CoffeeCard
                   coffeeID={item.id}
@@ -161,6 +165,12 @@ const styles = StyleSheet.create({
     fontFamily: FONT_REG,
     fontSize: 16,
     color: OFF_BLACK,
+  },
+  textNoBrews: {
+    fontFamily: FONT_REG,
+    fontSize: 14,
+    color: "#777",
+    paddingTop: 10,
   },
   addContainer: {
     flex: 1,
