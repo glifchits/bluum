@@ -58,3 +58,39 @@ export const CREATE_ROASTER = gql`
     }
   }
 `;
+
+export const CREATE_COFFEE = gql`
+  mutation CreateCoffee(
+    $name: String!
+    $roasterID: ID!
+    $description: String
+    $roast_type: String
+    $roast_style: String
+    $regions: [String]
+    $metadata: JSON
+  ) {
+    createCoffee(
+      name: $name
+      roaster_id: $roasterID
+      description: $description
+      roast_type: $roast_type
+      roast_style: $roast_style
+      regions: $regions
+      metadata: $metadata
+    ) {
+      id
+      name
+      created_at
+      updated_at
+      roaster {
+        id
+        name
+      }
+      description
+      roast_type
+      roast_style
+      regions
+      metadata
+    }
+  }
+`;

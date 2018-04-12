@@ -65,6 +65,16 @@ const typeDefs = `
       metadata: JSON
     ): Roaster
 
+    createCoffee(
+      name: String!
+      roaster_id: ID!
+      description: String
+      roast_type: String
+      roast_style: String
+      regions: [String]
+      metadata: JSON
+    ): Coffee
+
     createBrew(
       coffeeID: ID!, rating: Float, flavours: [String],
       method: String, notes: String, metadata: JSON

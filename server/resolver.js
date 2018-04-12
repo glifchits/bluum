@@ -56,6 +56,21 @@ exports.resolvers = {
       return await psql.one(q, insertValues);
     },
 
+    async createCoffee(_, { regions, metadata, ...args }) {
+      let insertValues = {
+        ...args,
+        regions: regions ? JSON.stringify(regions) : null,
+        metadata: JSON.stringify(metadata || {}),
+      };
+      let insertCols = Object.keys(insertValues);
+      let q = `
+        INSERT INTO coffees (${insertCols.join(", ")})
+        VALUES (${insertCols.map(c => "${" + c + "}").join(", ")})
+        RETURNING *;
+      `;
+      return await psql.one(q, insertValues);
+    },
+
     async createBrew(_, args) {
       const { coffeeID, metadata, flavours, ...otherArgs } = args;
       let insertValues = {
