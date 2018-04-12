@@ -35,7 +35,8 @@ exports.resolvers = {
         inner join coffees c
           on c.id = b.coffee_id
         group by coffee_id, c.id
-        order by time_last_brewed;
+        order by time_last_brewed desc
+        ${limit ? `limit ${limit}` : ""};
       `;
       return await psql.manyOrNone(q);
     },
