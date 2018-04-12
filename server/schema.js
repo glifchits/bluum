@@ -15,6 +15,8 @@ const typeDefs = `
     updated_at: Date!
     name: String!
     location: String
+    description: String
+    metadata: JSON
     coffees: [Coffee]
   }
 
@@ -56,6 +58,13 @@ const typeDefs = `
 
   # following mutations are allowed
   type Mutation {
+    createRoaster(
+      name: String!
+      location: String
+      description: String
+      metadata: JSON
+    ): Roaster
+
     createBrew(
       coffeeID: ID!, rating: Float, flavours: [String],
       method: String, notes: String, metadata: JSON

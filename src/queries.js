@@ -34,3 +34,27 @@ export const GET_BREW = gql`
   }
   ${BREW_FRAGMENT}
 `;
+
+export const CREATE_ROASTER = gql`
+  mutation CreateRoaster(
+    $name: String!
+    $location: String
+    $description: String
+    $metadata: JSON
+  ) {
+    createRoaster(
+      name: $name
+      location: $location
+      metadata: $metadata
+      description: $description
+    ) {
+      id
+      name
+      description
+      location
+      metadata
+      created_at
+      updated_at
+    }
+  }
+`;
