@@ -12,7 +12,7 @@ exports.resolvers = {
     async coffee(_, { id, limit, offset = 0 }) {
       let where = id ? "where id = $1" : "";
       let limitClause = limit
-        ? `order by id limit ${limit} offset ${offset}`
+        ? `order by id desc limit ${limit} offset ${offset}`
         : "";
       const q = `select * from coffees ${limitClause} ${where};`;
       return await psql.manyOrNone(q, id);
