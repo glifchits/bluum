@@ -71,7 +71,7 @@ class ShowRoasterModal extends React.Component {
             onGoBack={this.props.onGoBack}
             onChange={this._handleSearchChange}
           />
-          <View style={{ padding: 10 }}>
+          <View style={{ padding: 10, flex: 1 }}>
             <Query query={GET_ROASTERS}>
               {({ loading, error, data }) => {
                 if (loading) return <Text>Loading...</Text>;
@@ -90,24 +90,22 @@ class ShowRoasterModal extends React.Component {
                       </TouchableWithoutFeedback>
                     )}
                     keyExtractor={item => item.id}
-                    ListFooterComponent={
-                      <TouchableWithoutFeedback
-                        onPress={() => {
-                          this.props.onCloseModal();
-                          onAddNewRoaster();
-                        }}
-                      >
-                        <View style={styles.card}>
-                          <Text style={{ fontFamily: FONT_BOLD }}>
-                            Don't see a roaster? Add it!
-                          </Text>
-                        </View>
-                      </TouchableWithoutFeedback>
-                    }
                   />
                 );
               }}
             </Query>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                this.props.onCloseModal();
+                onAddNewRoaster();
+              }}
+            >
+              <View style={styles.card}>
+                <Text style={{ fontFamily: FONT_BOLD }}>
+                  Don't see a roaster? Add it!
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
         </SafeAreaView>
       </Modal>
