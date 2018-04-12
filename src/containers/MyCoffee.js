@@ -25,6 +25,7 @@ import {
 } from "../styles/common";
 import CoffeeCard from "../components/CoffeeCard";
 import Header from "../components/Header";
+import { GET_COFFEES } from "../queries";
 
 const SORT_OPTIONS = [
   { label: "Name", value: "name" },
@@ -152,15 +153,7 @@ export default class MyCoffeeScreen extends React.Component {
           options={SORT_OPTIONS}
         />
         <ScrollView style={styles.resultsContainer}>
-          <Query
-            query={gql`
-              {
-                coffee(limit: 10) {
-                  id
-                }
-              }
-            `}
-          >
+          <Query query={GET_COFFEES} variables={{ limit: 10 }}>
             {({ loading, error, data }) => {
               if (loading) return <Text>Loading...</Text>;
               if (error) return <Text>Error :(</Text>;

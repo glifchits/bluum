@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Query } from "react-apollo";
+import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import {
   View,
@@ -33,7 +33,7 @@ import FormTextInput from "../components/form/FormTextInput";
 import Dropdown from "../components/Dropdown";
 import coffee from "../testdata/my_coffees";
 import SearchbarHeader from "../components/SearchbarHeader";
-import { GET_ROASTERS } from "../queries";
+import { GET_ROASTERS, GET_COFFEES, CREATE_COFFEE } from "../queries";
 
 const ROAST_OPTIONS = [
   { label: "Light", value: "light" },
@@ -111,10 +111,10 @@ export default class AddNewCoffee extends React.Component {
 
     this.state = {
       inputValues: {
-        coffeeName: "",
-        coffeeRoast: "light",
-        coffeeDescription: "",
-        rating: null,
+        name: "",
+        roast_style: "light",
+        description: "",
+        // rating: null,
       },
       selectedRoaster: null,
       showRoasterModal: false,
@@ -127,10 +127,6 @@ export default class AddNewCoffee extends React.Component {
     tabBarVisible: false,
   };
 
-  _handleAddCoffee = () => {
-    // Do something
-  };
-
   _handleInputChange = (newText, inputName) => {
     let newInputValues = { ...this.state.inputValues };
     newInputValues[inputName] = newText;
@@ -139,7 +135,7 @@ export default class AddNewCoffee extends React.Component {
 
   _handleRoastChange = (itemValue, itemIndex) => {
     let newInputValues = { ...this.state.inputValues };
-    newInputValues.coffeeRoast = itemValue;
+    newInputValues.roast_style = itemValue;
     this.setState({ inputValues: newInputValues });
   };
 
@@ -185,8 +181,8 @@ export default class AddNewCoffee extends React.Component {
           <FormTextInput
             label="Name (Required)"
             placeholder="What’s the name of this coffee?"
-            value={inputValues.coffeeName}
-            type="coffeeName"
+            value={inputValues.name}
+            type="name"
             onChange={this._handleInputChange}
           />
           <TouchableWithoutFeedback onPress={this.onBeginSelectRoaster}>
@@ -211,7 +207,7 @@ export default class AddNewCoffee extends React.Component {
           ) : null}
           <Dropdown
             label="Roast Color (Required)"
-            selectedValue={inputValues.coffeeRoast}
+            selectedValue={inputValues.roast_style}
             onValueChange={this._handleRoastChange}
             options={ROAST_OPTIONS}
             layout="block"
@@ -236,17 +232,41 @@ export default class AddNewCoffee extends React.Component {
           <FormTextInput
             label="Description"
             placeholder="Enter a short description for this coffee"
-            value={inputValues.coffeeDescription}
-            type="coffeeDescription"
+            value={inputValues.description}
+            type="description"
             onChange={this._handleInputChange}
             multiline
             numberOfLines={4}
           />
         </ScrollView>
-        <ButtonBar
-          buttonText="Add This Coffee"
-          onPress={this._handleAddCoffee}
-        />
+        <Mutation
+          mutation={CREATE_COFFEE}
+          update={(cache, { data }) => {
+            const { coffee } = cache.readQuery({ query: GET_COFFEES });
+            const newCoffee = [data.createCoffee, ...coffee];
+            cache.writeQuery({
+              query: GET_COFFEES,
+              data: { coffee: newCoffee },
+            });
+          }}
+          onCompleted={() => this.props.navigation.goBack()}
+        >
+          {(addCoffee, { loading, error }) => {
+            return (
+              <ButtonBar
+                buttonText="Add This Coffee"
+                onPress={() => {
+                  const { inputValues } = this.state;
+                  const variables = {
+                    ...inputValues,
+                    roasterID: this.state.selectedRoaster.id,
+                  };
+                  addCoffee({ variables });
+                }}
+              />
+            );
+          }}
+        </Mutation>
       </View>
     );
   }

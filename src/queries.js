@@ -68,6 +68,14 @@ export const CREATE_ROASTER = gql`
   }
 `;
 
+export const GET_COFFEES = gql`
+  query GetCoffees($limit: Int = 10, $offset: Int) {
+    coffee(limit: $limit, offset: $offset) {
+      id
+    }
+  }
+`;
+
 export const CREATE_COFFEE = gql`
   mutation CreateCoffee(
     $name: String!
@@ -88,18 +96,6 @@ export const CREATE_COFFEE = gql`
       metadata: $metadata
     ) {
       id
-      name
-      created_at
-      updated_at
-      roaster {
-        id
-        name
-      }
-      description
-      roast_type
-      roast_style
-      regions
-      metadata
     }
   }
 `;
