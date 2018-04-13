@@ -84,6 +84,15 @@ export default class CoffeeProfileScreen extends React.Component {
         </View>
       ) : null;
 
+    const capitalize = str => {
+      return str[0].toUpperCase() + str.slice(1);
+    };
+
+    const snakeCaseToPresentable = str => {
+      const [first, ...rest] = str.split("_");
+      return [capitalize(first), ...rest].join(" ");
+    };
+
     return (
       <View>
         <Query query={GET_COFFEE} variables={{ id: coffeeID }}>
@@ -91,14 +100,42 @@ export default class CoffeeProfileScreen extends React.Component {
             if (loading) return <Text>Loading...</Text>;
             if (error) return <Text>Error:(</Text>;
             const coffee = data.coffee[0];
-            const regions = [...(coffee.regions || [])].sort().join(", ");
+
+            let { regions, description, metadata } = coffee;
+            // avoid nulls
+            regions = regions || [];
+            metadata = metadata || {};
+            if (
+              !description &&
+              !regions.length &&
+              !Object.keys(metadata).length
+            ) {
+              return (
+                <View style={{ padding: 20 }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontFamily: FONT_REG,
+                      color: BROWN,
+                    }}
+                  >
+                    We have no additional information about this coffee.
+                  </Text>
+                </View>
+              );
+            }
+
             return (
               <FlatList
                 data={[
-                  { title: "Description", value: coffee.description },
-                  { title: "Regions", value: regions },
-                  { title: "Origin", value: coffee.metadata.origin },
-                  { title: "Elevation", value: coffee.metadata.elevation },
+                  { title: "Description", value: description },
+                  { title: "Regions", value: [...regions].sort().join(", ") },
+                  ...Object.keys(metadata)
+                    .sort()
+                    .map(key => ({
+                      title: snakeCaseToPresentable(key),
+                      value: metadata[key],
+                    })),
                 ]}
                 renderItem={({ item }) => <Entry {...item} />}
                 keyExtractor={item => item.title}
