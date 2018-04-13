@@ -51,7 +51,7 @@ const typeDefs = `
   # e.g. https://www.apollographql.com/docs/graphql-tools/generate-schema.html#example
   type Query {
     roasters(id: ID): [Roaster]!,
-    coffee(id: ID, limit: Int, offset: Int): [Coffee]!
+    coffee(id: ID, limit: Int, offset: Int, searchTerm: String): [Coffee]!
     brews(id: ID, limit: Int, offset: Int, coffee: ID): [Brew]!
     latestBrewedCoffees(limit: Int): [Coffee]
   }

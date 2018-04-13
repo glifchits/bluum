@@ -44,7 +44,6 @@ export default class MyCoffeeScreen extends React.Component {
     super(props);
 
     this.state = {
-      coffeeList: my_coffees,
       sortBy: "name",
       sortDirection: "desc",
       searching: false,
@@ -79,10 +78,7 @@ export default class MyCoffeeScreen extends React.Component {
   }
 
   render() {
-    const { sortBy, coffeeList, searchTerm, searching } = this.state;
-    const sortedCoffee = sortCoffee(sortBy, coffeeList).filter(coffee =>
-      filterCoffee(coffee, searchTerm),
-    );
+    const { searchTerm, searching } = this.state;
 
     const centerComponent = this.state.searching ? (
       <TextInput
@@ -153,7 +149,7 @@ export default class MyCoffeeScreen extends React.Component {
           options={SORT_OPTIONS}
         />
         <ScrollView style={styles.resultsContainer}>
-          <Query query={GET_COFFEES} variables={{ limit: 10 }}>
+          <Query query={GET_COFFEES} variables={{ limit: 10, searchTerm }}>
             {({ loading, error, data }) => {
               if (loading) return <Text>Loading...</Text>;
               if (error) return <Text>Error :(</Text>;
