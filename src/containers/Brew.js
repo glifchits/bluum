@@ -32,6 +32,7 @@ import Header from "../components/Header";
 import ButtonBar from "../components/ButtonBar";
 import FormTextInput from "../components/form/FormTextInput";
 import BrewPropEntry from "../components/BrewPropEntry";
+import { snakeCaseToPresentable } from "../utils/utils";
 import { GET_BREWS_FOR_COFFEE, BREW_FRAGMENT, GET_BREW } from "../queries";
 
 const BREW_METHODS = [
@@ -67,6 +68,10 @@ export default class BrewScreen extends React.Component {
     const EntryOrNull = ({ title, value }) =>
       value ? <BrewPropEntry title={title} value={value} /> : null;
 
+    let { flavours, metadata } = brew;
+    flavours = flavours || [];
+    metadata = metadata || {};
+
     return (
       <FlatList
         style={styles.brewInfo}
@@ -77,22 +82,11 @@ export default class BrewScreen extends React.Component {
           },
           { title: "Notes", value: brew.notes },
           { title: "Method", value: brew.method },
-          {
-            title: "Grind Coarseness",
-            value: (brew.metadata || {})["Grind Coarseness"],
-          },
-          {
-            title: "Coffee Weight (g)",
-            value: (brew.metadata || {})["Coffee Weight (g)"],
-          },
-          {
-            title: "Water Weight (g)",
-            value: (brew.metadata || {})["Water Weight (g)"],
-          },
-          {
-            title: "Tasting Notes",
-            value: [...(brew.flavours || [])].sort().join(", "),
-          },
+          { title: "Tasting Notes", value: [...flavours].sort().join(", ") },
+          ...Object.entries(metadata).map(([k, v]) => ({
+            title: snakeCaseToPresentable(k),
+            value: v,
+          })),
         ]}
         renderItem={({ item }) => <EntryOrNull {...item} />}
         keyExtractor={item => item.title}

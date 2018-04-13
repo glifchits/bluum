@@ -9,13 +9,32 @@ exports.resolvers = {
       const query = `select * from roasters ${id ? "where id = $1" : ""};`;
       return await psql.manyOrNone(query, id);
     },
-    async coffee(_, { id, limit, offset = 0 }) {
-      let where = id ? "where id = $1" : "";
-      let limitClause = limit
-        ? `order by id desc limit ${limit} offset ${offset}`
-        : "";
-      const q = `select * from coffees ${limitClause} ${where};`;
-      return await psql.manyOrNone(q, id);
+    async coffee(_, { id, limit, offset = 0, searchTerm }) {
+      let q;
+      let args;
+
+      if (id) {
+        q = `select * from coffees where id = $1`;
+        args = [id];
+      }
+      if (limit) {
+        q = `select * from coffees
+              order by id desc
+              limit $1 offset $2`;
+        args = [limit, offset];
+      }
+      if (searchTerm) {
+        q = `select c.*
+             from coffees c
+             inner join roasters r
+               on r.id = c.roaster_id
+             where
+               c.name ilike $1
+               or r.name ilike $1
+             limit 10;`;
+        args = [`%${searchTerm}%`];
+      }
+      return await psql.manyOrNone(q, args);
     },
     async brews(_, { id, coffee, limit, offset = 0 }) {
       let limitClause = limit
