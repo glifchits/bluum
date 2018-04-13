@@ -22,3 +22,12 @@ export const filterCoffee = (coffee, searchTerm) => {
   const search = _norm(searchTerm);
   return matchStr.indexOf(search) >= 0;
 };
+
+export const capitalize = str => {
+  return str[0].toUpperCase() + str.slice(1);
+};
+
+export const snakeCaseToPresentable = str => {
+  const [first, ...rest] = str.split("_");
+  return [capitalize(first), ...rest].join(" ");
+};

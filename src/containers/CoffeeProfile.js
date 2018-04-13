@@ -8,7 +8,7 @@ import Dropdown from "../components/Dropdown";
 import Header from "../components/Header";
 import CoffeeSummary from "../components/CoffeeSummary";
 import brews from "../testdata/brews.js";
-import { sortCoffee } from "../utils/utils";
+import { snakeCaseToPresentable } from "../utils/utils";
 import { GET_BREWS_FOR_COFFEE } from "../queries";
 import {
   FONT_REG,
@@ -83,15 +83,6 @@ export default class CoffeeProfileScreen extends React.Component {
           <Text style={styles.infoItemValue}>{value}</Text>
         </View>
       ) : null;
-
-    const capitalize = str => {
-      return str[0].toUpperCase() + str.slice(1);
-    };
-
-    const snakeCaseToPresentable = str => {
-      const [first, ...rest] = str.split("_");
-      return [capitalize(first), ...rest].join(" ");
-    };
 
     return (
       <View>
