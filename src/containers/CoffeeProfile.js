@@ -14,6 +14,7 @@ import {
   FONT_REG,
   FONT_BOLD,
   LIGHT_BROWN,
+  BROWN,
   OFF_BLACK,
   BORDER_RADIUS,
 } from "../styles/common";
@@ -131,6 +132,23 @@ export default class CoffeeProfileScreen extends React.Component {
                 return a.id - b.id;
             }
           });
+
+          if (sortedBrews.length === 0) {
+            return (
+              <View style={{ padding: 20 }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontFamily: FONT_REG,
+                    color: BROWN,
+                  }}
+                >
+                  You have not logged any brews with this coffee. Tap "Brew
+                  These Beans" to log a brew!
+                </Text>
+              </View>
+            );
+          }
 
           return (
             <ScrollView>
