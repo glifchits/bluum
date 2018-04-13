@@ -2,7 +2,15 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
-import { View, Text, ScrollView, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Image,
+  Dimensions,
+} from "react-native";
+import { Button } from "react-native-elements";
 import Rating from "../components/Rating.js";
 import {
   FONT_REG,
@@ -10,17 +18,31 @@ import {
   BROWN,
   LIGHT_BROWN,
   OFF_BLACK,
+  BORDER_RADIUS,
 } from "../styles/common";
 
-const CUP_SIZE = 125;
+const WIDTH = Dimensions.get("window").width;
+const CUP_SIZE = WIDTH * 0.3;
+
+// Replace this with real data
+const USER_RATING = null;
 
 export default class CoffeeSummary extends React.Component {
   static propTypes = {
     coffeeID: PropTypes.string.isRequired,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      saved: false,
+    };
+  }
+
   render() {
     const { coffeeID } = this.props;
+    const { saved } = this.state;
     const COFFEE_QUERY = gql`
       query Coffee($coffeeID: ID!) {
         coffee(id: $coffeeID) {
@@ -65,8 +87,21 @@ export default class CoffeeSummary extends React.Component {
               <View style={styles.primaryInfo}>
                 <Text style={styles.coffeeName}>{coffee.name}</Text>
                 <Text style={styles.roaster}>{coffee.roaster.name}</Text>
-                {roastInfo}
-                <Rating rating={coffee.avgRating} ratingCount={5} />
+                <Rating
+                  userRating={USER_RATING}
+                  communityRating={coffee.avgRating}
+                  ratingCount={5}
+                />
+                <Button
+                  containerViewStyle={styles.buttonContainer}
+                  borderRadius={BORDER_RADIUS}
+                  title={saved ? "Saved" : "Save this Coffee"}
+                  onPress={() => this.setState({ saved: !saved })}
+                  textStyle={saved ? styles.savedText : styles.defaultText}
+                  buttonStyle={
+                    saved ? styles.savedButton : styles.defaultButton
+                  }
+                />
               </View>
             </View>
           );
@@ -89,12 +124,13 @@ const styles = StyleSheet.create({
     color: BROWN,
   },
   roaster: {
-    fontSize: 16,
+    fontSize: 12,
     color: OFF_BLACK,
     fontFamily: FONT_REG,
+    marginBottom: 5,
   },
   roastType: {
-    fontSize: 14,
+    fontSize: 12,
     color: OFF_BLACK,
     fontFamily: FONT_REG,
   },
@@ -119,5 +155,28 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: "center",
     fontFamily: FONT_REG,
+  },
+  buttonContainer: {
+    marginLeft: 0,
+    marginTop: 20,
+  },
+  defaultButton: {
+    backgroundColor: LIGHT_BROWN,
+  },
+  savedButton: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: LIGHT_BROWN,
+  },
+  defaultText: {
+    fontSize: 14,
+    color: "#fff",
+    fontFamily: FONT_BOLD,
+    marginTop: 0,
+  },
+  savedText: {
+    fontSize: 14,
+    color: LIGHT_BROWN,
+    fontFamily: FONT_BOLD,
   },
 });

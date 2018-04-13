@@ -38,7 +38,11 @@ export default class BrewCard extends React.Component {
                         ? new Date(brew.created_at).toDateString()
                         : loading ? "Loading..." : "Error :("}
                     </Text>
-                    <Rating rating={brew.rating} ratingCount={5} />
+                    <Rating
+                      simple
+                      communityRating={brew.rating}
+                      ratingCount={5}
+                    />
                   </View>
                   {isLoaded ? (
                     <View style={styles.body}>

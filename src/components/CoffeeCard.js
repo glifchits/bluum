@@ -61,7 +61,8 @@ const CoffeeCard = ({ coffeeID, onPress }) => {
                   {isLoaded ? coffee.roaster.name : ""}
                 </Text>
                 <Rating
-                  rating={isLoaded ? Math.round(coffee.avgRating) : 0}
+                  simple
+                  communityRating={isLoaded ? Math.round(coffee.avgRating) : 0}
                   ratingCount={5}
                 />
               </View>
