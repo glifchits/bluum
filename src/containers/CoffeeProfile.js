@@ -91,7 +91,7 @@ export default class CoffeeProfileScreen extends React.Component {
             if (loading) return <Text>Loading...</Text>;
             if (error) return <Text>Error:(</Text>;
             const coffee = data.coffee[0];
-            const regions = [...coffee.regions].sort().join(", ");
+            const regions = [...(coffee.regions || [])].sort().join(", ");
             return (
               <FlatList
                 data={[
