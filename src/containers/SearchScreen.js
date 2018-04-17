@@ -26,6 +26,7 @@ import coffee from "../testdata/my_coffees";
 import { filterCoffee } from "../utils/utils";
 import CoffeeCard from "../components/CoffeeCard";
 import Header from "../components/Header";
+import { GET_COFFEES } from "../queries";
 
 const GUTTER = 10;
 const WIDTH = Dimensions.get("window").width;
@@ -57,14 +58,6 @@ export default class SearchScreen extends React.Component {
 
   render() {
     const { inputValue } = this.state;
-
-    const GET_COFFEES = gql`
-      query CoffeeListIDs {
-        coffee(limit: 10) {
-          id
-        }
-      }
-    `;
 
     return (
       <View style={styles.screenContainer}>
@@ -120,7 +113,10 @@ export default class SearchScreen extends React.Component {
           </TouchableOpacity>
         ) : null}
         <ScrollView style={styles.resultsContainer}>
-          <Query query={GET_COFFEES}>
+          <Query
+            query={GET_COFFEES}
+            variables={{ limit: 10, searchTerm: inputValue }}
+          >
             {({ loading, error, data }) => {
               if (loading) return <Text>Loading...</Text>;
               if (error) return <Text>Error :(</Text>;
