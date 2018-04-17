@@ -1,14 +1,14 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-elements";
-import { LIGHT_BROWN, FONT_BOLD } from "../styles/common";
+import { LIGHT_BROWN, FONT_BOLD, BORDER_RADIUS } from "../styles/common";
 
 export default class ButtonBar extends React.Component {
   render() {
     return (
       <View style={styles.buttonBar}>
         <Button
-          borderRadius={3}
+          borderRadius={BORDER_RADIUS}
           title={this.props.buttonText}
           onPress={this.props.onPress}
           textStyle={styles.text}

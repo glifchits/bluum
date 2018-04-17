@@ -28,7 +28,7 @@ const SORT_OPTIONS = [
   { label: "Coarseness", value: "coarseness" },
 ];
 
-const TABS = ["My Brews", "Coffee Info"];
+const TABS = ["Coffee Info", "My Brews"];
 
 export default class CoffeeProfileScreen extends React.Component {
   constructor(props) {
@@ -225,7 +225,7 @@ export default class CoffeeProfileScreen extends React.Component {
             selectedIndex={this.state.selectedTab}
             buttons={TABS}
             containerStyle={{
-              height: 50,
+              height: 40,
               marginTop: 20,
               marginLeft: 0,
               marginRight: 0,
@@ -236,7 +236,7 @@ export default class CoffeeProfileScreen extends React.Component {
             selectedTextStyle={styles.selectedTabText}
             containerBorderRadius={BORDER_RADIUS}
           />
-          {this.state.selectedTab === 0
+          {this.state.selectedTab === 1
             ? myBrewsBody
             : this.renderCoffeeMetadata(coffeeID)}
         </ScrollView>
@@ -264,17 +264,20 @@ const styles = StyleSheet.create({
   },
   tab: {
     backgroundColor: "#FAEDE1",
+    borderWidth: 0,
   },
   tabText: {
     fontFamily: FONT_BOLD,
     color: LIGHT_BROWN,
+    fontSize: 12,
   },
   selectedTab: {
-    backgroundColor: LIGHT_BROWN,
+    backgroundColor: "#E7D3C1",
   },
   selectedTabText: {
     fontFamily: FONT_BOLD,
-    color: "#fff",
+    color: BROWN,
+    fontSize: 12,
   },
   infoItemContainer: {
     marginTop: 10,
