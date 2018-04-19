@@ -1,5 +1,14 @@
 // NOTE https://medium.com/@james_mensch/node-js-graphql-postgresql-quickstart-91ffa4374663
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { psql } = require("./psqlAdapter"); // our adapter from psqlAdapter.js
+require("dotenv").config();
+
+const { JWT_SECRET } = process.env;
+if (!JWT_SECRET) {
+  console.error("must provide a JWT_SECRET env var");
+  process.exit(1);
+}
 
 // should match type Query in schema.js
 // one function per endpoint
@@ -59,6 +68,17 @@ exports.resolvers = {
       `;
       return await psql.manyOrNone(q);
     },
+
+    userProfile: async (_, args, ctx) => {
+      let user = await ctx.user;
+      if (user === null) {
+        return null;
+      }
+      let q =
+        "select id, email, created_at, updated_at " +
+        "from users where id = ${id};";
+      return await psql.one(q, { id: user.id });
+    },
   },
 
   Mutation: {
@@ -108,6 +128,50 @@ exports.resolvers = {
         RETURNING *;
       `;
       return await psql.one(q, insertValues);
+    },
+
+    signupUser: async (_, { email, password }, ctx) => {
+      let insertUser =
+        "INSERT INTO users (email, password) " +
+        "VALUES (${email}, ${password}) " +
+        "RETURNING id, email, created_at, updated_at;";
+
+      const hashedPassword = await bcrypt.hash(password, 8);
+      const user = await psql.one(insertUser, {
+        email: email,
+        password: hashedPassword,
+      });
+
+      const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+      ctx.user = Promise.resolve(user);
+
+      return {
+        ...user,
+        jwt: token,
+      };
+    },
+
+    loginUser: async (_, { email, password }, ctx) => {
+      let q = "SELECT id, email, password FROM users WHERE email = $1;";
+      let candidate = await psql.one(q, email);
+
+      const passwordValid = await bcrypt.compare(password, candidate.password);
+      if (!passwordValid) {
+        return Promise.reject("password invalid");
+      }
+
+      let user = { ...candidate };
+      delete user.password;
+
+      // NOTE, section 7.4
+      // https://medium.com/react-native-training/building-chatty-part-7-authentication-in-graphql-cd37770e5ab3
+      const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+      ctx.user = Promise.resolve(user);
+
+      return {
+        ...user,
+        jwt: token,
+      };
     },
   },
 
