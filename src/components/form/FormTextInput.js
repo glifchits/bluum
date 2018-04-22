@@ -10,29 +10,18 @@ import {
 
 export default class FormTextInput extends React.Component {
   render() {
-    const {
-      label,
-      placeholder,
-      value,
-      type,
-      onChange,
-      multiline,
-      numberOfLines,
-    } = this.props;
+    const { label, type, onChange, ...props } = this.props;
     return (
       <View style={styles.formInputContainer}>
         <Text style={styles.formLabel}>{label}</Text>
         <TextInput
           autoCorrect={false}
           spellCheck={false}
-          value={value}
-          placeholder={placeholder}
           onChangeText={newText => onChange(newText, type)}
           style={styles.formTextInput}
           placeholderTextColor={LIGHT_BROWN}
           underlineColorAndroid="transparent"
-          multiline={multiline}
-          numberOfLines={numberOfLines}
+          {...props}
         />
       </View>
     );

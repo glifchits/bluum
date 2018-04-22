@@ -1,12 +1,16 @@
 import React, { Fragment } from "react";
 import { Icon } from "react-native-elements";
-import { TabNavigator, StackNavigator } from "react-navigation";
+import {
+  TabNavigator,
+  StackNavigator,
+  SwitchNavigator,
+} from "react-navigation";
 import HomeScreen from "./containers/Home";
 import SearchScreen from "./containers/SearchScreen";
 import MyCoffeeScreen from "./containers/MyCoffee.js";
 import AddNewCoffee from "./containers/AddNewCoffee.js";
 import AddNewRoaster from "./containers/AddNewRoaster.js";
-import Profile from "./containers/Profile";
+import { Profile, SignIn, AuthLoading } from "./containers/Profile";
 import CoffeeProfileScreen from "./containers/CoffeeProfile";
 import BrewScreen from "./containers/Brew";
 import {
@@ -39,6 +43,17 @@ const SearchStack = StackNavigator({
     screen: AddNewRoaster,
   },
 });
+
+const ProfileStack = SwitchNavigator(
+  {
+    AuthLoading: AuthLoading,
+    Profile: Profile,
+    SignIn: SignIn,
+  },
+  {
+    initialRouteName: "AuthLoading",
+  },
+);
 
 const Router = TabNavigator(
   {
@@ -73,7 +88,7 @@ const Router = TabNavigator(
       },
     },
     Profile: {
-      screen: Profile,
+      screen: ProfileStack,
       path: "/containers/profile",
       navigationOptions: {
         tabBarLabel: "Profile",
