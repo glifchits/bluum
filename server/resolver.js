@@ -72,7 +72,7 @@ exports.resolvers = {
     userProfile: async (_, args, ctx) => {
       let user = await ctx.user;
       if (user === null) {
-        return null;
+        throw new Error("Not authenticated");
       }
       let q =
         "select id, email, created_at, updated_at " +
@@ -130,7 +130,7 @@ exports.resolvers = {
       return await psql.one(q, insertValues);
     },
 
-    signupUser: async (_, { email, password }, ctx) => {
+    signupUser: async (_, { email, password }) => {
       let insertUser =
         "INSERT INTO users (email, password) " +
         "VALUES (${email}, ${password}) " +
@@ -143,7 +143,6 @@ exports.resolvers = {
       });
 
       const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-      ctx.user = Promise.resolve(user);
 
       return {
         ...user,
@@ -151,7 +150,7 @@ exports.resolvers = {
       };
     },
 
-    loginUser: async (_, { email, password }, ctx) => {
+    loginUser: async (_, { email, password }) => {
       let q = "SELECT id, email, password FROM users WHERE email = $1;";
       let candidate = await psql.one(q, email);
 
@@ -166,7 +165,6 @@ exports.resolvers = {
       // NOTE, section 7.4
       // https://medium.com/react-native-training/building-chatty-part-7-authentication-in-graphql-cd37770e5ab3
       const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-      ctx.user = Promise.resolve(user);
 
       return {
         ...user,
