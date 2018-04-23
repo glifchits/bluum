@@ -103,6 +103,7 @@ export class SignUp extends React.Component {
         <FormTextInput
           label="email"
           placeholder="me@coolbeans.io"
+          autoCapitalize="none"
           value={this.state.email}
           onChange={email => this.setState({ email })}
         />
@@ -189,6 +190,7 @@ export class SignIn extends React.Component {
         <FormTextInput
           label="email"
           placeholder="me@coolbeans.io"
+          autoCapitalize="none"
           value={this.state.email}
           onChange={email => this.setState({ email })}
         />
