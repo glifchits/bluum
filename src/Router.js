@@ -10,7 +10,7 @@ import SearchScreen from "./containers/SearchScreen";
 import MyCoffeeScreen from "./containers/MyCoffee.js";
 import AddNewCoffee from "./containers/AddNewCoffee.js";
 import AddNewRoaster from "./containers/AddNewRoaster.js";
-import { Profile, SignIn, AuthLoading } from "./containers/Profile";
+import { Profile, SignIn, SignUp, AuthLoading } from "./containers/Profile";
 import CoffeeProfileScreen from "./containers/CoffeeProfile";
 import BrewScreen from "./containers/Brew";
 import {
@@ -49,6 +49,7 @@ const ProfileStack = SwitchNavigator(
     AuthLoading: AuthLoading,
     Profile: Profile,
     SignIn: SignIn,
+    SignUp: SignUp,
   },
   {
     initialRouteName: "AuthLoading",

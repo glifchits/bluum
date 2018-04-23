@@ -80,6 +80,92 @@ export class Profile extends React.Component {
   }
 }
 
+export class SignUp extends React.Component {
+  static navigationOptions = {
+    header: null,
+  };
+
+  state = {
+    email: "",
+    password: "",
+  };
+
+  render() {
+    const SIGNUP_MUTATION = gql`
+      mutation SignupUser($email: String!, $password: String!) {
+        signupUser(email: $email, password: $password) {
+          jwt
+        }
+      }
+    `;
+    return (
+      <View style={styles.formContainer}>
+        <FormTextInput
+          label="email"
+          placeholder="me@coolbeans.io"
+          value={this.state.email}
+          onChange={email => this.setState({ email })}
+        />
+        <FormTextInput
+          label="password"
+          type="password"
+          value={this.state.password}
+          placeholder="kittens1992"
+          onChange={password => this.setState({ password })}
+          secureTextEntry
+        />
+        <Mutation
+          mutation={SIGNUP_MUTATION}
+          onCompleted={async data => {
+            const { jwt } = data.signupUser;
+            this.props.navigation.navigate("Profile");
+            await AsyncStorage.setItem(TOKEN_KEY, jwt);
+          }}
+        >
+          {(loginUser, { loading, error }) => {
+            let errorMsg = null;
+            if (error) {
+              errorMsg = (
+                <View>
+                  {error.graphQLErrors.map(({ message }, idx) => (
+                    <Text key={idx}>{message}</Text>
+                  ))}
+                </View>
+              );
+            }
+            return (
+              <React.Fragment>
+                <Button
+                  title="Submit"
+                  loading={!!loading}
+                  textStyle={{
+                    fontFamily: FONT_BOLD,
+                    color: "white",
+                  }}
+                  buttonStyle={styles.submitButtonStyle}
+                  onPress={() => {
+                    let { email, password } = this.state;
+                    loginUser({
+                      variables: { email, password },
+                    });
+                  }}
+                />
+                {errorMsg}
+              </React.Fragment>
+            );
+          }}
+        </Mutation>
+        <Button
+          title="Already a user? Sign in here"
+          textStyle={{ color: BROWN, fontFamily: FONT_REG }}
+          buttonStyle={styles.signupButtonStyle}
+          onPress={() => this.props.navigation.navigate("SignIn")}
+        />
+      </View>
+    );
+  }
+}
+
 export class SignIn extends React.Component {
   static navigationOptions = {
     header: null,
@@ -142,7 +228,7 @@ export class SignIn extends React.Component {
                     fontFamily: FONT_BOLD,
                     color: "white",
                   }}
-                  buttonStyle={styles.buttonStyle}
+                  buttonStyle={styles.submitButtonStyle}
                   onPress={() => {
                     let { email, password } = this.state;
                     loginUser({
@@ -159,6 +245,7 @@ export class SignIn extends React.Component {
           title="Not a user yet? Sign up"
           textStyle={{ color: BROWN, fontFamily: FONT_REG }}
           buttonStyle={styles.signupButtonStyle}
+          onPress={() => this.props.navigation.navigate("SignUp")}
         />
       </View>
     );
@@ -178,7 +265,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "center",
   },
-  buttonStyle: {
+  submitButtonStyle: {
     backgroundColor: BROWN,
     borderRadius: 5,
     marginTop: 20,
