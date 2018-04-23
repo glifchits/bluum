@@ -3,7 +3,9 @@ import ApolloClient from "apollo-boost";
 import Router from "./src/Router.js";
 import { Font } from "expo";
 import { ApolloProvider } from "react-apollo";
-import { Text, SafeAreaView, StyleSheet } from "react-native";
+import { Text, SafeAreaView, StyleSheet, AsyncStorage } from "react-native";
+
+const TOKEN_KEY = "@CoolBeansApp:userAuthToken";
 
 class Loader extends React.Component {
   render() {
@@ -26,6 +28,14 @@ export default class AppContainer extends React.Component {
         process.env.NODE_ENV === "development"
           ? "http://localhost:3000/graphql"
           : "https://plcczn4vic.execute-api.us-west-1.amazonaws.com/latest/graphql",
+      request: async operation => {
+        const token = await AsyncStorage.getItem(TOKEN_KEY);
+        operation.setContext({
+          headers: {
+            authorization: token ? `Bearer ${token}` : "",
+          },
+        });
+      },
     });
 
     await Font.loadAsync({

@@ -22,7 +22,6 @@ export class AuthLoading extends React.Component {
   async componentDidMount() {
     const { navigation } = this.props;
     let token = await AsyncStorage.getItem(TOKEN_KEY);
-    console.log("got token", token);
     if (token === null) {
       navigation.navigate("SignIn");
     } else {
@@ -45,9 +44,29 @@ export class Profile extends React.Component {
   };
 
   render() {
+    const GET_PROFILE = gql`
+      {
+        userProfile {
+          email
+          created_at
+        }
+      }
+    `;
     return (
       <View style={styles.container}>
         <Text>My profile</Text>
+        <Query query={GET_PROFILE}>
+          {({ loading, error, data }) => {
+            if (loading) return <Text>Loading</Text>;
+            if (error) return <Text>Error :(</Text>;
+            return (
+              <React.Fragment>
+                <Text>Email: {data.userProfile.email}</Text>
+                <Text>Created: {data.userProfile.created_at}</Text>
+              </React.Fragment>
+            );
+          }}
+        </Query>
         <Button
           title="Log out"
           buttonStyle={styles.buttonStyle}
@@ -126,7 +145,6 @@ export class SignIn extends React.Component {
                   buttonStyle={styles.buttonStyle}
                   onPress={() => {
                     let { email, password } = this.state;
-                    console.log("email", email, "password", password);
                     loginUser({
                       variables: { email, password },
                     });
