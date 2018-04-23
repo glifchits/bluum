@@ -138,9 +138,9 @@ export class SignIn extends React.Component {
                 <Button
                   title="Submit"
                   loading={!!loading}
-                  titleStyle={{
+                  textStyle={{
                     fontFamily: FONT_BOLD,
-                    color: LIGHT_BROWN,
+                    color: "white",
                   }}
                   buttonStyle={styles.buttonStyle}
                   onPress={() => {
@@ -155,6 +155,11 @@ export class SignIn extends React.Component {
             );
           }}
         </Mutation>
+        <Button
+          title="Not a user yet? Sign up"
+          textStyle={{ color: BROWN, fontFamily: FONT_REG }}
+          buttonStyle={styles.signupButtonStyle}
+        />
       </View>
     );
   }
@@ -176,6 +181,11 @@ const styles = StyleSheet.create({
   buttonStyle: {
     backgroundColor: BROWN,
     borderRadius: 5,
-    marginTop: 30,
+    marginTop: 20,
+  },
+  signupButtonStyle: {
+    backgroundColor: "white",
+    borderRadius: 5,
+    marginTop: 20,
   },
 });
