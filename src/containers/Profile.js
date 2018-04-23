@@ -1,5 +1,7 @@
 import React, { Fragment } from "react";
 import { AsyncStorage, StyleSheet, Text, View } from "react-native";
+import { Query, Mutation } from "react-apollo";
+import gql from "graphql-tag";
 import { Button } from "react-native-elements";
 import FormTextInput from "../components/form/FormTextInput";
 import {
@@ -46,6 +48,14 @@ export class Profile extends React.Component {
     return (
       <View style={styles.container}>
         <Text>My profile</Text>
+        <Button
+          title="Log out"
+          buttonStyle={styles.buttonStyle}
+          onPress={async () => {
+            await AsyncStorage.removeItem(TOKEN_KEY);
+            this.props.navigation.navigate("AuthLoading");
+          }}
+        />
       </View>
     );
   }
@@ -62,6 +72,13 @@ export class SignIn extends React.Component {
   };
 
   render() {
+    const LOGIN_MUTATION = gql`
+      mutation LoginUser($email: String!, $password: String!) {
+        loginUser(email: $email, password: $password) {
+          jwt
+        }
+      }
+    `;
     return (
       <View style={styles.formContainer}>
         <FormTextInput
@@ -78,18 +95,48 @@ export class SignIn extends React.Component {
           onChange={password => this.setState({ password })}
           secureTextEntry
         />
-        <Button
-          title="Submit"
-          titleStyle={{
-            fontFamily: FONT_BOLD,
-            color: LIGHT_BROWN,
+        <Mutation
+          mutation={LOGIN_MUTATION}
+          onCompleted={async data => {
+            const { jwt } = data.loginUser;
+            this.props.navigation.navigate("Profile");
+            await AsyncStorage.setItem(TOKEN_KEY, jwt);
           }}
-          buttonStyle={{
-            backgroundColor: BROWN,
-            borderRadius: 5,
-            marginTop: 30,
+        >
+          {(loginUser, { loading, error }) => {
+            let errorMsg = null;
+            if (error) {
+              errorMsg = (
+                <View>
+                  {error.graphQLErrors.map(({ message }, idx) => (
+                    <Text key={idx}>{message}</Text>
+                  ))}
+                </View>
+              );
+            }
+            return (
+              <React.Fragment>
+                <Button
+                  title="Submit"
+                  loading={!!loading}
+                  titleStyle={{
+                    fontFamily: FONT_BOLD,
+                    color: LIGHT_BROWN,
+                  }}
+                  buttonStyle={styles.buttonStyle}
+                  onPress={() => {
+                    let { email, password } = this.state;
+                    console.log("email", email, "password", password);
+                    loginUser({
+                      variables: { email, password },
+                    });
+                  }}
+                />
+                {errorMsg}
+              </React.Fragment>
+            );
           }}
-        />
+        </Mutation>
       </View>
     );
   }
@@ -107,5 +154,10 @@ const styles = StyleSheet.create({
     padding: 50,
     backgroundColor: "#fff",
     justifyContent: "center",
+  },
+  buttonStyle: {
+    backgroundColor: BROWN,
+    borderRadius: 5,
+    marginTop: 30,
   },
 });
