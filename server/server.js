@@ -35,7 +35,7 @@ GraphQLServer.use(
 
 function getUserWithID(userID) {
   let q = "select id, email from users where id = ${id}";
-  return psql.one(q, { id: userID });
+  return () => psql.one(q, { id: userID });
 }
 
 // graphql endpoint
@@ -49,7 +49,9 @@ GraphQLServer.use(
   graphqlExpress(req => ({
     schema,
     context: {
-      user: req.user ? getUserWithID(req.user.id) : Promise.resolve(null),
+      getUser: req.user
+        ? getUserWithID(req.user.id)
+        : () => Promise.reject("Unauthenticated"),
     },
   })),
 );

@@ -56,24 +56,24 @@ exports.resolvers = {
       let q = `select * from brews ${whereClause} ${limitClause};`;
       return await psql.manyOrNone(q);
     },
-    async latestBrewedCoffees(_, { limit }) {
+
+    async latestBrewedCoffees(_, { limit }, ctx) {
+      let user = await ctx.getUser();
       let q = `
         select coffee_id, max(b.created_at) time_last_brewed, c.*
         from brews b
         inner join coffees c
           on c.id = b.coffee_id
+        where b.created_by = $1
         group by coffee_id, c.id
         order by time_last_brewed desc
         ${limit ? `limit ${limit}` : ""};
       `;
-      return await psql.manyOrNone(q);
+      return await psql.manyOrNone(q, user.id);
     },
 
     userProfile: async (_, args, ctx) => {
-      let user = await ctx.user;
-      if (user === null) {
-        throw new Error("Not authenticated");
-      }
+      let user = await ctx.getUser();
       let q =
         "select id, email, created_at, updated_at " +
         "from users where id = ${id};";
@@ -96,11 +96,13 @@ exports.resolvers = {
       return await psql.one(q, insertValues);
     },
 
-    async createCoffee(_, { regions, metadata, ...args }) {
+    createCoffee: async (_, { regions, metadata, ...args }, ctx) => {
+      let user = await ctx.getUser();
       let insertValues = {
         ...args,
         regions: regions ? JSON.stringify(regions) : null,
         metadata: JSON.stringify(metadata || {}),
+        created_by: user.id,
       };
       let insertCols = Object.keys(insertValues);
       let q = `
@@ -111,12 +113,15 @@ exports.resolvers = {
       return await psql.one(q, insertValues);
     },
 
-    async createBrew(_, args) {
+    createBrew: async (_, args, ctx) => {
+      let user = await ctx.getUser();
+      console.log("create brew", user);
       const { coffeeID, metadata, flavours, ...otherArgs } = args;
       let insertValues = {
         coffee_id: coffeeID,
         flavours: flavours ? JSON.stringify(flavours) : null,
         metadata: JSON.stringify(metadata || {}),
+        created_by: user.id,
         ...otherArgs,
       };
       let insertCols = Object.keys(insertValues);
