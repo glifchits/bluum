@@ -53,7 +53,7 @@ const typeDefs = `
     created_at: Date!
     updated_at: Date!
     email: String!
-    jwt: String
+    jwt: JWT
   }
 
   # the following queries are allowed
