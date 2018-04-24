@@ -236,17 +236,7 @@ export default class BrewScreen extends React.Component {
           <View style={styles.buttonBar}>
             <Mutation
               mutation={ADD_BREW}
-              update={(cache, { data }) => {
-                const { brews } = cache.readQuery({
-                  query: GET_BREWS_FOR_COFFEE,
-                  variables: { id: coffeeID },
-                });
-                cache.writeQuery({
-                  query: GET_BREWS_FOR_COFFEE,
-                  variables: { id: coffeeID },
-                  data: { brews: [...brews, data.createBrew] },
-                });
-              }}
+              refetchQueries={[`BrewsForCoffee`]}
               onCompleted={data => {
                 // see handleSelectBrew
                 this.props.navigation.goBack();
