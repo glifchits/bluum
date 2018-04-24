@@ -27,23 +27,17 @@ import {
   BORDER_RADIUS,
 } from "../styles/common";
 import CoffeeCard from "../components/CoffeeCard";
+import { GET_LATEST_BREWS } from "../queries";
 
 const { Form } = t.form;
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 
 const RecentlyBrewed = ({ handleSelectCoffee }) => {
-  const RECENT_COFFEES = gql`
-    {
-      latestBrewedCoffees(limit: 2) {
-        id
-      }
-    }
-  `;
   return (
     <React.Fragment>
       <Text style={styles.text}>Recently brewed coffee</Text>
-      <Query query={RECENT_COFFEES}>
+      <Query query={GET_LATEST_BREWS}>
         {({ loading, error, data }) => {
           if (loading) return <Text>Loading...</Text>;
           if (error) return <Text>Error :(</Text>;

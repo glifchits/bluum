@@ -99,3 +99,11 @@ export const CREATE_COFFEE = gql`
     }
   }
 `;
+
+export const GET_LATEST_BREWS = gql`
+  query GetLatestBrewedCoffees {
+    latestBrewedCoffees(limit: 2) {
+      id
+    }
+  }
+`;
