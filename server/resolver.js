@@ -115,7 +115,6 @@ exports.resolvers = {
 
     createBrew: async (_, args, ctx) => {
       let user = await ctx.getUser();
-      console.log("create brew", user);
       const { coffeeID, metadata, flavours, ...otherArgs } = args;
       let insertValues = {
         coffee_id: coffeeID,
