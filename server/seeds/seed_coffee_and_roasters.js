@@ -81,90 +81,11 @@ const my_coffees = [
   },
 ];
 
-function choose(arr, nullProbability = 0) {
-  if (Math.random() < nullProbability) {
-    return null;
-  }
-  const idx = Math.floor(arr.length * Math.random());
-  return arr[idx];
-}
-
-function generateBrew(coffeeID) {
-  const rating = choose([1, 2, 3, 4, 5], 0.1);
-
-  // notes probability
-  let notes = null;
-  if (Math.random() > 0.8) {
-    if (rating >= 4) {
-      // prettier-ignore
-      notes = choose([
-        "One of my favourites", "Good brew, very sweet",
-        "Delicate and tealike", "Crazy peanut butter notes",
-      ]);
-    } else if (rating === 3) {
-      notes = choose([
-        "Tried out the new stainless steel cone, good but too much sediment",
-        "Okay, not very strong though",
-        "Decent flavour",
-      ]);
-    } else if (rating === 2) {
-      notes = choose(["Getting a lot of bitter flavours", "Weak AF"]);
-    } else if (rating === 1) {
-      notes = choose(["Truly awful", "Jim brewed this one"]);
-    }
-  }
-
-  // flavours
-  // prettier-ignore
-  const flavourOptions = [
-    "Apricot", "Stonefruit", "Honey", "Cola", "Tea",
-    "Bitter", "Sour", "Sweet", "Strawberry", "Cranberry", "Butterscotch",
-    "Chocolate", "Jam", "Peanut Butter", "Caramel", "Vanilla",
-    "Roasted Almond", "Tropical Fruit", "Eucalyptus", "Melon", "Peach",
-  ];
-  let flavours = null;
-  if (Math.random() > 0.5) {
-    flavours = [choose(flavourOptions)];
-    const numMoreFlavours = Math.floor(Math.random() * 3);
-    for (let x = 0; x < numMoreFlavours; x++) {
-      const flavour = choose(flavourOptions);
-      if (!flavours.includes(flavour)) {
-        flavours.push(flavour);
-      }
-    }
-  }
-
-  const metadata = {};
-  if (Math.random() > 0.7) {
-    metadata["Grind Coarseness"] = choose("3456789".split(""));
-  }
-  if (Math.random() > 0.8) {
-    const ratio = 16 + Math.random() * 7;
-    const coffee = 20 + Math.floor(Math.random() * 30);
-    metadata["Coffee Weight (g)"] = coffee;
-    metadata["Water Weight (g)"] = Math.round(coffee * ratio);
-  }
-
-  return {
-    coffee_id: coffeeID,
-    rating,
-    method: choose(["French Press", "Chemex", "Pourover", "Drip"], 0.5),
-    notes,
-    flavours: flavours ? JSON.stringify(flavours) : null,
-    metadata:
-      metadata && Object.keys(metadata).length
-        ? JSON.stringify(metadata)
-        : null,
-  };
-}
-
 exports.seed = async function(knex, Promise) {
   // wipe out coffees table
   await knex("coffees").del();
   // wipe out the roasters table
   await knex("roasters").del();
-  // wipe out brews table
-  await knex("brews").del();
 
   // start off with creating roasters
   const roasters = Array.from(new Set(my_coffees.map(c => c.roaster)));
@@ -197,13 +118,5 @@ exports.seed = async function(knex, Promise) {
       roaster_id: roasterMap[roaster],
     };
   });
-
-  const coffees = await knex.insert(coffeesToInsert, "id").into("coffees");
-
-  // create brews
-  const brews = [];
-  for (let i = 0; i < 100; i++) {
-    brews.push(generateBrew(choose(coffees)));
-  }
-  return knex("brews").insert(brews);
+  await knex.insert(coffeesToInsert, "id").into("coffees");
 };
