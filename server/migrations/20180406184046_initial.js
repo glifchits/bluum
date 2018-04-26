@@ -9,7 +9,10 @@ exports.up = function(knex, Promise) {
       t.string("location");
       t.text("description");
       t.timestamps(true, true);
-      t.jsonb("metadata").defaultTo("{}");
+      t
+        .jsonb("metadata")
+        .notNullable()
+        .defaultTo("{}");
       t.integer("created_by").unsigned();
       t
         .foreign("created_by")
@@ -26,8 +29,14 @@ exports.up = function(knex, Promise) {
       t.text("description");
       t.string("roast_style"); // light, med, dark
       t.string("roast_type"); // filter, espresso
-      t.jsonb("regions").defaultTo("[]");
-      t.jsonb("metadata").defaultTo("{}");
+      t
+        .jsonb("regions")
+        .notNullable()
+        .defaultTo("[]");
+      t
+        .jsonb("metadata")
+        .notNullable()
+        .defaultTo("{}");
       t.integer("roaster_id").unsigned();
       t
         .foreign("roaster_id")
@@ -52,9 +61,15 @@ exports.up = function(knex, Promise) {
         .onDelete("SET NULL");
       t.decimal("rating", 5, 2); // precision=5, scale=2 (999.99)
       t.string("method");
-      t.jsonb("flavours").defaultTo("[]");
+      t
+        .jsonb("flavours")
+        .notNullable()
+        .defaultTo("[]");
       t.text("notes");
-      t.jsonb("metadata").defaultTo("{}");
+      t
+        .jsonb("metadata")
+        .notNullable()
+        .defaultTo("{}");
       t.integer("created_by").unsigned();
       t
         .foreign("created_by")
@@ -101,8 +116,8 @@ exports.up = function(knex, Promise) {
 exports.down = function(knex, Promise) {
   return Promise.resolve()
     .then(() => knex.schema.dropTableIfExists("brews"))
+    .then(() => knex.schema.dropTableIfExists("ratings"))
     .then(() => knex.schema.dropTableIfExists("coffees"))
     .then(() => knex.schema.dropTableIfExists("roasters"))
-    .then(() => knex.schema.dropTableIfExists("ratings"))
     .then(() => knex.schema.dropTableIfExists("users"));
 };
