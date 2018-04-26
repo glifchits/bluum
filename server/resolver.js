@@ -123,7 +123,7 @@ exports.resolvers = {
       const { coffeeID, metadata, flavours, ...otherArgs } = args;
       let insertValues = {
         coffee_id: coffeeID,
-        flavours: flavours ? JSON.stringify(flavours) : null,
+        flavours: JSON.stringify(flavours || []),
         metadata: JSON.stringify(metadata || {}),
         created_by: user.id,
         ...otherArgs,
