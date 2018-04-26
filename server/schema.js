@@ -33,7 +33,6 @@ const typeDefs = `
     regions: [String]
     metadata: JSON
     avgRating: Float
-    last_brewed: Date
   }
 
   type Brew {

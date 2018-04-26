@@ -197,15 +197,6 @@ exports.resolvers = {
       const ret = await psql.oneOrNone(q, coffee.id);
       return ret ? ret.avgrating : null;
     },
-    last_brewed: async coffee => {
-      const q = `
-        select max(created_at) as last_brewed
-        from brews
-        where coffee_id = $1
-      `;
-      const ret = await psql.oneOrNone(q, coffee.id);
-      return ret ? ret.last_brewed : null;
-    },
   },
 
   Roaster: {
