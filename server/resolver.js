@@ -22,6 +22,11 @@ exports.resolvers = {
       let q;
       let args;
 
+      let queryAllowed = id || (limit && limit >= 0 && limit <= 100);
+      if (!queryAllowed) {
+        throw new Error("must constrain search");
+      }
+
       if (id) {
         q = `select * from coffees where id = $1`;
         args = [id];
