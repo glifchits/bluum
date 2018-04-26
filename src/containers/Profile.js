@@ -12,7 +12,7 @@ import {
   LIGHT_BROWN,
 } from "../styles/common";
 
-const TOKEN_KEY = "@CoolBeansApp:userAuthToken";
+import { TOKEN_KEY } from "../constants";
 
 export class AuthLoading extends React.Component {
   static navigationOptions = {
@@ -55,7 +55,7 @@ export class Profile extends React.Component {
     return (
       <View style={styles.container}>
         <Text>My profile</Text>
-        <Query query={GET_PROFILE}>
+        <Query query={GET_PROFILE} fetchPolicy="network-only">
           {({ loading, error, data }) => {
             if (loading) return <Text>Loading</Text>;
             if (error) return <Text>Error :(</Text>;

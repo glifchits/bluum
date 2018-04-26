@@ -1,5 +1,13 @@
 // Collection of helper functions
 
+import { AsyncStorage } from "react-native";
+import { TOKEN_KEY } from "../constants";
+
+export async function isLoggedIn() {
+  let token = await AsyncStorage.getItem(TOKEN_KEY);
+  return token !== null;
+}
+
 export const _norm = str => {
   return str.toLowerCase().replace(/ /g, "");
 };

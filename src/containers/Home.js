@@ -15,7 +15,7 @@ import {
 import { Icon } from "react-native-elements";
 import { StackNavigator } from "react-navigation";
 import t from "tcomb-form-native";
-import { _norm } from "../utils/utils";
+import { _norm, isLoggedIn } from "../utils/utils";
 import coffees from "../testdata/my_coffees";
 import {
   OFF_BLACK,
@@ -72,12 +72,17 @@ export default class HomeScreen extends React.Component {
 
     this.state = {
       inputValue: "",
+      isLoggedIn: false,
     };
   }
 
   static navigationOptions = {
     header: null,
   };
+
+  async componentDidMount() {
+    this.setState({ isLoggedIn: await isLoggedIn() });
+  }
 
   _handleSelectCoffee = coffeeID => {
     this.props.navigation.navigate("CoffeeProfile", { coffeeID });
@@ -89,6 +94,13 @@ export default class HomeScreen extends React.Component {
   };
 
   render() {
+    let recentlyBrewed = <Text>Not logged in</Text>;
+    if (this.state.isLoggedIn) {
+      recentlyBrewed = (
+        <RecentlyBrewed handleSelectCoffee={this._handleSelectCoffee} />
+      );
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.logoContainer}>
@@ -105,7 +117,7 @@ export default class HomeScreen extends React.Component {
               <Text style={styles.searchInput}>Search for a coffee</Text>
             </View>
           </TouchableWithoutFeedback>
-          <RecentlyBrewed handleSelectCoffee={this._handleSelectCoffee} />
+          {recentlyBrewed}
         </View>
       </View>
     );

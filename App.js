@@ -5,6 +5,7 @@ import { Font } from "expo";
 import { ApolloProvider } from "react-apollo";
 import { Text, SafeAreaView, StyleSheet, AsyncStorage } from "react-native";
 
+// defined again in constants.js
 const TOKEN_KEY = "@CoolBeansApp:userAuthToken";
 
 class Loader extends React.Component {
