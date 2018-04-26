@@ -17,8 +17,8 @@ const typeDefs = `
     name: String!
     location: String
     description: String
-    metadata: JSON
-    coffees: [Coffee]
+    metadata: JSON!
+    coffees: [Coffee]!
   }
 
   type Coffee {
@@ -30,8 +30,8 @@ const typeDefs = `
     roast_type: String
     roast_style: String
     roaster: Roaster!
-    regions: [String]
-    metadata: JSON
+    regions: [String]!
+    metadata: JSON!
     avgRating: Float
   }
 
@@ -41,10 +41,10 @@ const typeDefs = `
     updated_at: Date!
     coffee: Coffee!
     rating: Float
-    flavours: [String]
+    flavours: [String]!
     method: String
     notes: String
-    metadata: JSON
+    metadata: JSON!
   }
 
   type User {
@@ -62,7 +62,7 @@ const typeDefs = `
     coffee(id: ID, limit: Int, offset: Int, searchTerm: String): [Coffee]!
     brews(id: ID, limit: Int, offset: Int, coffee: ID): [Brew]!
     latestBrewedCoffees(limit: Int): [Coffee]
-    userProfile: User
+    userProfile: User!
   }
 
   # following mutations are allowed
@@ -72,7 +72,7 @@ const typeDefs = `
       location: String
       description: String
       metadata: JSON
-    ): Roaster
+    ): Roaster!
 
     createCoffee(
       name: String!
@@ -82,15 +82,19 @@ const typeDefs = `
       roast_style: String
       regions: [String]
       metadata: JSON
-    ): Coffee
+    ): Coffee!
 
     createBrew(
-      coffeeID: ID!, rating: Float, flavours: [String],
-      method: String, notes: String, metadata: JSON
-    ): Brew
+      coffeeID: ID!
+      rating: Float
+      flavours: [String]
+      method: String
+      notes: String
+      metadata: JSON
+    ): Brew!
 
-    signupUser(email: String!, password: String!): User
-    loginUser(email: String!, password: String!): User
+    signupUser(email: String!, password: String!): User!
+    loginUser(email: String!, password: String!): User!
   }
 `;
 
