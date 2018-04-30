@@ -58,6 +58,12 @@ export default class CoffeeSummary extends React.Component {
       }
     `;
 
+    const USER_RATING = gql`
+      query CoffeeRating($id: ID!) {
+        userRating(coffeeID: $id)
+      }
+    `;
+
     return (
       <Query query={COFFEE_QUERY} variables={{ coffeeID }}>
         {({ loading, error, data }) => {
@@ -87,11 +93,20 @@ export default class CoffeeSummary extends React.Component {
               <View style={styles.primaryInfo}>
                 <Text style={styles.coffeeName}>{coffee.name}</Text>
                 <Text style={styles.roaster}>{coffee.roaster.name}</Text>
-                <Rating
-                  userRating={USER_RATING}
-                  communityRating={coffee.avgRating}
-                  ratingCount={5}
-                />
+                <Query
+                  query={USER_RATING}
+                  variables={{ id: coffee.id }}
+                  fetchPolicy="cache-and-network"
+                >
+                  {({ loading, error, data }) => (
+                    <Rating
+                      coffeeID={coffee.id}
+                      userRating={data.userRating || null}
+                      communityRating={coffee.avgRating}
+                      ratingCount={5}
+                    />
+                  )}
+                </Query>
                 <Button
                   containerViewStyle={styles.buttonContainer}
                   borderRadius={BORDER_RADIUS}

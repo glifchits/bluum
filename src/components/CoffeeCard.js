@@ -24,11 +24,16 @@ const CoffeeCard = ({ coffeeID, onPress }) => {
       coffee(id: $id) {
         id
         name
-        avgRating
         roaster {
           name
         }
       }
+    }
+  `;
+
+  const USER_RATING = gql`
+    query UserRating($id: ID!) {
+      userRating(coffeeID: $id)
     }
   `;
 
@@ -60,11 +65,19 @@ const CoffeeCard = ({ coffeeID, onPress }) => {
                 <Text style={styles.roaster}>
                   {isLoaded ? coffee.roaster.name : ""}
                 </Text>
-                <Rating
-                  simple
-                  communityRating={isLoaded ? Math.round(coffee.avgRating) : 0}
-                  ratingCount={5}
-                />
+                <Query
+                  query={USER_RATING}
+                  variables={{ id: coffee.id }}
+                  fetchPolicy="cache-and-network"
+                >
+                  {({ loading, error, data }) => (
+                    <Rating
+                      simple
+                      communityRating={(data && data.userRating) || 0}
+                      ratingCount={5}
+                    />
+                  )}
+                </Query>
               </View>
             );
 

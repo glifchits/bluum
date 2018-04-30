@@ -1,4 +1,6 @@
 import React, { Fragment } from "react";
+import { Query, Mutation } from "react-apollo";
+import gql from "graphql-tag";
 import {
   StyleSheet,
   Text,
@@ -42,7 +44,19 @@ export default class Rating extends React.Component {
   closeModal = () => this.setState({ openModal: false });
 
   render() {
-    const { ratingCount, userRating, communityRating, simple } = this.props;
+    const {
+      ratingCount,
+      userRating,
+      communityRating,
+      simple,
+      coffeeID,
+    } = this.props;
+
+    const RATE_COFFEE = gql`
+      mutation RateCoffee($coffeeID: ID!, $rating: Float!) {
+        rateCoffee(coffeeID: $coffeeID, rating: $rating)
+      }
+    `;
 
     if (simple) {
       return (
@@ -74,13 +88,31 @@ export default class Rating extends React.Component {
             <Text style={modalStyles.rating}>
               {this.state.modalRating || 0}/5
             </Text>
-            <Button
-              borderRadius={3}
-              title="Done"
-              onPress={this.closeModal}
-              textStyle={modalStyles.buttonText}
-              buttonStyle={modalStyles.button}
-            />
+            <Mutation mutation={RATE_COFFEE}>
+              {(rateCoffee, { loading, error }) => {
+                return (
+                  <Button
+                    borderRadius={3}
+                    title="Done"
+                    loading={!!loading}
+                    onPress={() => {
+                      let { modalRating } = this.state;
+                      if (typeof modalRating !== undefined) {
+                        rateCoffee({
+                          variables: {
+                            coffeeID: coffeeID,
+                            rating: modalRating,
+                          },
+                        });
+                      }
+                      this.closeModal();
+                    }}
+                    textStyle={modalStyles.buttonText}
+                    buttonStyle={modalStyles.button}
+                  />
+                );
+              }}
+            </Mutation>
           </View>
         </Modal>
       );
