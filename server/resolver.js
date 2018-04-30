@@ -91,8 +91,8 @@ exports.resolvers = {
         select rating from ratings
         where coffee_id = $1 and user_id = $2;`;
       let args = [coffeeID, user.id];
-      let { rating } = await psql.oneOrNone(q, args);
-      return rating;
+      let result = await psql.oneOrNone(q, args);
+      return result ? result.rating : null;
     },
   },
 
