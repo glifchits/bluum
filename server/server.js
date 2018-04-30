@@ -33,9 +33,17 @@ GraphQLServer.use(
   }),
 );
 
-function getUserWithID(userID) {
-  let q = "select id, email from users where id = ${id}";
-  return () => psql.one(q, { id: userID });
+function verifyTokenUser(user) {
+  // This function will receive user information decoded from request JWT token
+  // The token may contain invalid user data, which is why we query the DB here
+  let q = "select id, email from users where id = ${id} and email = ${email};";
+  return () => {
+    let found = psql.oneOrNone(q, { id: user.id, email: user.email });
+    if (!found) {
+      return Promise.reject("Could not resolve to user");
+    }
+    return found;
+  };
 }
 
 // graphql endpoint
@@ -50,7 +58,7 @@ GraphQLServer.use(
     schema,
     context: {
       getUser: req.user
-        ? getUserWithID(req.user.id)
+        ? verifyTokenUser(req.user)
         : () => Promise.reject("Unauthenticated"),
     },
   })),
