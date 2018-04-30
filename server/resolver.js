@@ -84,6 +84,16 @@ exports.resolvers = {
         "from users where id = ${id};";
       return await psql.one(q, { id: user.id });
     },
+
+    userRating: async (_, { coffeeID }, ctx) => {
+      let user = await ctx.getUser();
+      let q = `
+        select rating from ratings
+        where coffee_id = $1 and user_id = $2;`;
+      let args = [coffeeID, user.id];
+      let { rating } = await psql.oneOrNone(q, args);
+      return rating;
+    },
   },
 
   Mutation: {
@@ -137,6 +147,24 @@ exports.resolvers = {
         RETURNING *;
       `;
       return await psql.one(q, insertValues);
+    },
+
+    rateCoffee: async (_, { coffeeID, rating }, ctx) => {
+      let user = await ctx.getUser();
+      let q = `
+        insert into ratings (rating, coffee_id, user_id)
+        values ($\{rating}, $\{coffeeID}, $\{userID})
+        on conflict (coffee_id, user_id) do update
+        set rating = $\{rating}
+        returning rating;
+      `;
+      let args = {
+        rating,
+        coffeeID,
+        userID: user.id,
+      };
+      let inserted = await psql.one(q, args);
+      return inserted.rating;
     },
 
     signupUser: async (_, { email, password }) => {

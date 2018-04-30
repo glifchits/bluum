@@ -63,6 +63,7 @@ const typeDefs = `
     brews(id: ID, limit: Int, offset: Int, coffee: ID): [Brew]!
     latestBrewedCoffees(limit: Int): [Coffee]
     userProfile: User!
+    userRating(coffeeID: ID!): Float
   }
 
   # following mutations are allowed
@@ -92,6 +93,11 @@ const typeDefs = `
       notes: String
       metadata: JSON
     ): Brew!
+
+    rateCoffee(
+      coffeeID: ID!
+      rating: Float!
+    ): Float!
 
     signupUser(email: String!, password: String!): User!
     loginUser(email: String!, password: String!): User!

@@ -103,6 +103,7 @@ exports.up = function(knex, Promise) {
         .foreign("user_id")
         .references("users.id")
         .onDelete("SET NULL");
+      t.unique(["coffee_id", "user_id"]);
     });
   }
 
