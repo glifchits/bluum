@@ -4,6 +4,9 @@ const pgPromise = require("pg-promise");
 require("dotenv").config();
 
 const connStr = process.env.BLUUM_RDS;
+
+console.log(process.env.BLUUM_RDS);
+
 const pgp = pgPromise({}); // empty pgPromise instance
 const psql = pgp(connStr); // get connection to your db instance
 
