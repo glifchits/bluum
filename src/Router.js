@@ -46,6 +46,9 @@ const Router = StackNavigator({
   Profile: {
     screen: Profile,
   },
+  CoffeeProfile: {
+    screen: CoffeeProfileScreen,
+  },
 });
 
 export default Router;

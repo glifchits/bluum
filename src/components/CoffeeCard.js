@@ -67,7 +67,7 @@ const CoffeeCard = ({ coffeeID, onPress }) => {
                 </Text>
                 <Query
                   query={USER_RATING}
-                  variables={{ id: coffee.id }}
+                  variables={{ id: coffeeID }}
                   fetchPolicy="cache-and-network"
                 >
                   {({ loading, error, data }) => (
