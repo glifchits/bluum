@@ -11,6 +11,7 @@ import {
   BROWN,
   LIGHT_BROWN,
 } from "../styles/common";
+import { isLoggedIn } from "../utils/utils";
 
 import { TOKEN_KEY } from "../constants";
 
@@ -21,8 +22,8 @@ export class AuthLoading extends React.Component {
 
   async componentDidMount() {
     const { navigation } = this.props;
-    let token = await AsyncStorage.getItem(TOKEN_KEY);
-    if (token === null) {
+    let loggedIn = await isLoggedIn();
+    if (!loggedIn) {
       navigation.navigate("SignIn");
     } else {
       navigation.navigate("Profile");

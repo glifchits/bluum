@@ -37,7 +37,15 @@ const Router = StackNavigator({
   AuthLoading: {
     screen: AuthLoading,
   },
-
+  SignIn: {
+    screen: SignIn,
+  },
+  SignUp: {
+    screen: SignUp,
+  },
+  Profile: {
+    screen: Profile,
+  },
 });
 
 export default Router;
