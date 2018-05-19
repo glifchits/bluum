@@ -4,6 +4,7 @@ import { AsyncStorage } from "react-native";
 import { TOKEN_KEY } from "../constants";
 
 export async function isLoggedIn() {
+  // TODO expire the token at some point, do a server side re-check
   let token = await AsyncStorage.getItem(TOKEN_KEY);
   return token !== null;
 }
