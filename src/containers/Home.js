@@ -103,10 +103,18 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.settingsContainer}>
-            <View style={styles.spacer} />
-            <TouchableWithoutFeedback onPressIn={()=> this.props.navigation.navigate("AuthLoading")}>
-            <Icon style={styles.accountIcon} type="material" name="account-circle" color={LIGHT_BROWN} size={30}/>
-            </TouchableWithoutFeedback>
+          <View style={styles.spacer} />
+          <TouchableWithoutFeedback
+            onPressIn={() => this.props.navigation.navigate("AuthLoading")}
+          >
+            <Icon
+              style={styles.accountIcon}
+              type="material"
+              name="account-circle"
+              color={LIGHT_BROWN}
+              size={30}
+            />
+          </TouchableWithoutFeedback>
         </View>
         <View style={styles.logoContainer}>
           <Image
@@ -210,14 +218,14 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
   },
   settingsContainer: {
-    marginTop: (HEIGHT * 0.05),
-    paddingRight: (WIDTH * 0.05),
+    marginTop: HEIGHT * 0.05,
+    paddingRight: WIDTH * 0.05,
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "flex-end",
   },
   spacer: {
-    flex:1,
+    flex: 1,
   },
 });
 
